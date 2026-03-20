@@ -212,7 +212,7 @@ export default function Page() {
     taskId: string,
     scope: "project" | "area"
   ) {
-    const updater = (task: Task) => ({
+    const updater = (task: Task): Task => ({
       ...task,
       duration:
         task.duration === null

@@ -71,10 +71,57 @@ export default function Page() {
   const [renameAreaState, setRenameAreaState] =
     useState<RenameAreaState>(null);
   const saveTimerRef = useRef<number | null>(null);
+  const hasInitializedSyncRef = useRef(false);
 
   useEffect(() => {
-    saveStoredData({ areas, brainItems });
-  }, [areas, brainItems]);
+  saveStoredData({ areas, brainItems });
+
+  if (!hasInitializedSyncRef.current) return;
+
+  if (saveTimerRef.current) {
+    window.clearTimeout(saveTimerRef.current);
+  }
+
+  saveTimerRef.current = window.setTimeout(() => {
+    fetch("/api/save-state", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ areas, brainItems }),
+    }).catch(() => {});
+  }, 500);
+}, [areas, brainItems]);
+
+  useEffect(() => {
+  let isMounted = true;
+
+  async function loadCloud() {
+    try {
+      const res = await fetch("/api/load-state", { cache: "no-store" });
+      const json = await res.json();
+
+      if (!isMounted) return;
+
+      if (json.success && json.data) {
+        setAreas(json.data.areas ?? []);
+        setBrainItems(json.data.brainItems ?? []);
+      }
+    } catch (e) {
+      console.error("cloud load failed", e);
+    } finally {
+      if (isMounted) {
+        hasInitializedSyncRef.current = true;
+      }
+    }
+  }
+
+  loadCloud();
+
+  return () => {
+    isMounted = false;
+  };
+}, []);
 
   useEffect(() => {
     return () => {

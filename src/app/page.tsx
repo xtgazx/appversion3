@@ -916,11 +916,7 @@ export default function Page() {
                   <div className="text-xs text-slate-500 dark:text-slate-400">
                     {saveMessage}
                   </div>
-                )}
-                
-                <div className="text-xs text-red-500">
-  {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? "CLERK OK" : "NO CLERK KEY"}
-</div>
+                )}        
 
                 <SignedOut>
   <SignInButton>

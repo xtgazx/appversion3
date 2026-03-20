@@ -798,15 +798,6 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-      <div className="fixed right-2 top-2 z-50">
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-        </div>
       <div className="mx-auto flex min-h-screen max-w-md flex-col bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.10),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(20,184,166,0.10),_transparent_28%),linear-gradient(180deg,_#f8fafc,_#eef2ff)] md:max-w-6xl md:flex-row dark:bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.18),_transparent_26%),radial-gradient(circle_at_bottom_right,_rgba(20,184,166,0.14),_transparent_24%),linear-gradient(180deg,_#0f172a,_#020617)]">
         <aside className="hidden md:flex md:w-72 md:flex-col md:border-r md:border-slate-200 md:bg-white/80 md:p-4 md:backdrop-blur-xl dark:md:border-slate-700 dark:md:bg-slate-900/80">
           <div className="mb-6 px-2">
@@ -926,6 +917,21 @@ export default function Page() {
                     {saveMessage}
                   </div>
                 )}
+
+                <SignedOut>
+  <SignInButton>
+    <button
+      type="button"
+      className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+    >
+      Sign in
+    </button>
+  </SignInButton>
+</SignedOut>
+
+<SignedIn>
+  <UserButton />
+</SignedIn>
                 <button
                   type="button"
                   className="rounded-full border border-slate-200 bg-white p-2 text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"

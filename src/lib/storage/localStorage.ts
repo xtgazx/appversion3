@@ -8,6 +8,9 @@ import { normalizeArea, normalizeBrainItem } from "../utils/normalize";
 
 export const STORAGE_KEY = "life-dashboard-canvas-v1";
 
+export const ONBOARDING_KEY = "life-dashboard-onboarding-complete";
+export const HELP_OPENED_KEY = "life-dashboard-help-opened";
+
 export function readStoredData(): StoredData {
   if (typeof window === "undefined") {
     return { areas: initialAreas, brainItems: initialBrainItems };
@@ -48,4 +51,24 @@ export function readStoredData(): StoredData {
 export function saveStoredData(data: StoredData) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+export function hasCompletedOnboarding(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(ONBOARDING_KEY) === "true";
+}
+
+export function setCompletedOnboarding(value: boolean) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(ONBOARDING_KEY, value ? "true" : "false");
+}
+
+export function hasOpenedHelp(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(HELP_OPENED_KEY) === "true";
+}
+
+export function setOpenedHelp(value: boolean) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(HELP_OPENED_KEY, value ? "true" : "false");
 }

@@ -1,4 +1,4 @@
-export type TabKey = "areas" | "week" | "today" | "brain";
+export type TabKey = "areas" | "week" | "today" | "brain" | "review";
 export type Duration = "quick" | "medium" | "long" | null;
 export type BrainConvertType = "idea" | "project" | "task" | null;
 

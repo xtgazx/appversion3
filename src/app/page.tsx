@@ -78,6 +78,7 @@ export default function Page() {
   const saveTimerRef = useRef<number | null>(null);
   const hasInitializedSyncRef = useRef(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState(0);
 
   useEffect(() => {
   saveStoredData({ areas, brainItems });
@@ -807,6 +808,31 @@ export default function Page() {
       ? "Area View"
       : "Personal System";
 
+  const steps = [
+  {
+    title: "Capture → Organize → Execute",
+    body: "Brain Dump → Areas → Week / Today",
+  },
+  {
+    title: "Areas",
+    body: "Work, Home, Health. Everything lives in an Area.",
+  },
+  {
+    title: "Projects, Tasks, Ideas",
+    body: "Projects = multi-step. Tasks = one-off. Ideas = maybe later.",
+  },
+  {
+    title: "Week and Today",
+    body: "Week = planning. Today = what you do now.",
+  },
+  {
+    title: "Brain Dump",
+    body: "Capture fast. Convert later.",
+  },
+];
+
+const step = steps[onboardingStep];
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <div className="mx-auto flex min-h-screen max-w-md flex-col bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.10),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(20,184,166,0.10),_transparent_28%),linear-gradient(180deg,_#f8fafc,_#eef2ff)] md:max-w-6xl md:flex-row dark:bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.18),_transparent_26%),radial-gradient(circle_at_bottom_right,_rgba(20,184,166,0.14),_transparent_24%),linear-gradient(180deg,_#0f172a,_#020617)]">
@@ -1499,51 +1525,52 @@ export default function Page() {
 {showOnboarding && (
   <ModalShell>
     <Card className="w-full max-w-md">
-      <div className="space-y-4 px-5 py-5">
-        <div>
-          <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
-            Capture → Organize → Execute
-          </div>
-          <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-            Brain Dump → Areas → Week / Today
-          </div>
-        </div>
+ <div className="space-y-5 px-5 py-5">
+  <div>
+    <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
+      {step.title}
+    </div>
+    <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+      {step.body}
+    </div>
+  </div>
 
-        <div className="space-y-3 text-sm text-slate-700 dark:text-slate-200">
-          <div>
-            <div className="font-medium">Areas</div>
-            <div>Work, Home, Health - everything lives in an Area.</div>
-          </div>
+  <div className="flex items-center justify-between">
+    <div className="text-xs text-slate-500">
+      {onboardingStep + 1} / {steps.length}
+    </div>
 
-          <div>
-            <div className="font-medium">Projects, Tasks, Ideas</div>
-            <div>Projects = multi-step. Tasks = one-off. Ideas = maybe later.</div>
-          </div>
+    <div className="flex gap-2">
+      {onboardingStep > 0 && (
+        <button
+          onClick={() => setOnboardingStep((s) => s - 1)}
+          className="rounded-2xl border px-3 py-2 text-sm"
+        >
+          Back
+        </button>
+      )}
 
-          <div>
-            <div className="font-medium">Week and Today</div>
-            <div>Week = planning. Today = what you do now.</div>
-          </div>
-
-          <div>
-            <div className="font-medium">Brain Dump</div>
-            <div>Capture fast, then convert items later.</div>
-          </div>
-        </div>
-
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => {
-  setCompletedOnboarding(true);
-  setShowOnboarding(false);
-}}
-            className="rounded-2xl bg-indigo-600 px-4 py-2 text-white"
-          >
-            Get Started
-          </button>
-        </div>
-      </div>
+      {onboardingStep < steps.length - 1 ? (
+        <button
+          onClick={() => setOnboardingStep((s) => s + 1)}
+          className="rounded-2xl bg-indigo-600 px-4 py-2 text-white"
+        >
+          Next
+        </button>
+      ) : (
+        <button
+          onClick={() => {
+            setCompletedOnboarding(true);
+            setShowOnboarding(false);
+          }}
+          className="rounded-2xl bg-indigo-600 px-4 py-2 text-white"
+        >
+          Get Started
+        </button>
+      )}
+    </div>
+  </div>
+</div>
     </Card>
   </ModalShell>
 )}

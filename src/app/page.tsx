@@ -41,7 +41,10 @@ import {
   selectWeekTasks,
 } from "../features/tasks/taskSelectors";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { hasCompletedOnboarding } from "../lib/storage/localStorage";
+import {
+  hasCompletedOnboarding,
+  setCompletedOnboarding,
+} from "../lib/storage/localStorage";
 
 export default function Page() {
   const stored = readStoredData();
@@ -1531,7 +1534,10 @@ export default function Page() {
         <div className="flex gap-2">
           <button
             type="button"
-            onClick={() => setShowOnboarding(false)}
+            onClick={() => {
+  setCompletedOnboarding(true);
+  setShowOnboarding(false);
+}}
             className="rounded-2xl bg-indigo-600 px-4 py-2 text-white"
           >
             Get Started

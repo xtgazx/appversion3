@@ -41,6 +41,7 @@ import {
   selectWeekTasks,
 } from "../features/tasks/taskSelectors";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { hasCompletedOnboarding } from "../lib/storage/localStorage";
 
 export default function Page() {
   const stored = readStoredData();
@@ -73,6 +74,7 @@ export default function Page() {
     useState<RenameAreaState>(null);
   const saveTimerRef = useRef<number | null>(null);
   const hasInitializedSyncRef = useRef(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
   saveStoredData({ areas, brainItems });
@@ -136,6 +138,12 @@ export default function Page() {
     setIsAddingTask(false);
     setNewTaskTitle("");
   }, [selectedAreaId, selectedProjectId, tab]);
+
+  useEffect(() => {
+  if (!hasCompletedOnboarding()) {
+    setShowOnboarding(true);
+  }
+}, []);
 
   const selectedArea = areas.find((area) => area.id === selectedAreaId) ?? null;
   const selectedProject =

@@ -1492,6 +1492,59 @@ export default function Page() {
           </ModalShell>
         )}
 
+
+{showOnboarding && (
+  <ModalShell>
+    <Card className="w-full max-w-md">
+      <div className="space-y-4 px-5 py-5">
+        <div>
+          <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
+            Capture → Organize → Execute
+          </div>
+          <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            Brain Dump → Areas → Week / Today
+          </div>
+        </div>
+
+        <div className="space-y-3 text-sm text-slate-700 dark:text-slate-200">
+          <div>
+            <div className="font-medium">Areas</div>
+            <div>Work, Home, Health - everything lives in an Area.</div>
+          </div>
+
+          <div>
+            <div className="font-medium">Projects, Tasks, Ideas</div>
+            <div>Projects = multi-step. Tasks = one-off. Ideas = maybe later.</div>
+          </div>
+
+          <div>
+            <div className="font-medium">Week and Today</div>
+            <div>Week = planning. Today = what you do now.</div>
+          </div>
+
+          <div>
+            <div className="font-medium">Brain Dump</div>
+            <div>Capture fast, then convert items later.</div>
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setShowOnboarding(false)}
+            className="rounded-2xl bg-indigo-600 px-4 py-2 text-white"
+          >
+            Get Started
+          </button>
+        </div>
+      </div>
+    </Card>
+  </ModalShell>
+)}
+
+
+
+
         <ConfirmDialog
           open={Boolean(confirmState)}
           label={confirmState?.label ?? ""}

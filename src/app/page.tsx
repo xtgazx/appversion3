@@ -50,6 +50,7 @@ import {
 export default function Page() {
 const [areas, setAreas] = useState<Area[]>([]);
 const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
+  const [updatedAt, setUpdatedAt] = useState<string>(new Date().toISOString());
   const [tab, setTab] = useState<TabKey>("areas");
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
@@ -81,8 +82,8 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const [onboardingStep, setOnboardingStep] = useState(0);
 
   useEffect(() => {
-  saveStoredData({ areas, brainItems });
-
+  saveStoredData({ areas, brainItems, updatedAt });
+    
   if (!hasInitializedSyncRef.current) return;
 
   if (saveTimerRef.current) {
@@ -162,7 +163,7 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const completedTasks = useMemo(() => selectCompletedTasks(allTasks), [allTasks]);
 
   function showSaved() {
-    saveStoredData({ areas, brainItems });
+    saveStoredData({ areas, brainItems, updatedAt });
     setSaveMessage("Saved");
     if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
     saveTimerRef.current = window.setTimeout(() => setSaveMessage(""), 1200);

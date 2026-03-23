@@ -16,6 +16,7 @@ import { readStoredData, saveStoredData } from "../lib/storage/localStorage";
 import type {
   Area,
   BrainConvertType,
+  BrainItem,
   ConfirmState,
   IconKey,
   RenameAreaState,
@@ -48,7 +49,7 @@ import {
 
 export default function Page() {
 const [areas, setAreas] = useState<Area[]>([]);
-const [brainItems, setBrainItems] = useState([]);
+const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const [tab, setTab] = useState<TabKey>("areas");
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);

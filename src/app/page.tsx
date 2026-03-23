@@ -788,7 +788,9 @@ export default function Page() {
           ? "This Week"
           : tab === "today"
             ? "Today"
-            : "Brain Dump";
+            : tab === "review"
+              ? "Weekly Review"
+              : "Brain Dump";
 
   const headerSub = selectedProject
     ? "Tasks in this project"
@@ -800,7 +802,9 @@ export default function Page() {
           ? "Current focus queue"
           : tab === "today"
             ? "What matters now"
-            : "Capture first, organize later";
+            : tab === "review"
+            ? "Reset and prepare your system"
+              : "Capture first, organize later";
 
   const headerEyebrow = selectedProject
     ? "Project View"

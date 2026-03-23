@@ -57,8 +57,11 @@ export function readStoredData(): StoredData {
       : new Date().toISOString(),
 };
   } catch {
-    return { areas: initialAreas, brainItems: initialBrainItems };
-  }
+    return {
+      areas: initialAreas,
+      brainItems: initialBrainItems,
+      updatedAt: new Date().toISOString(),
+    };  }
 }
 
 export function saveStoredData(data: StoredData) {

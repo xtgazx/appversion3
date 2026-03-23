@@ -70,4 +70,5 @@ export type RenameAreaState = { areaId: string; value: string } | null;
 export type StoredData = {
   areas: Area[];
   brainItems: BrainItem[];
+  updatedAt: string;
 };

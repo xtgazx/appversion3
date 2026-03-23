@@ -13,13 +13,21 @@ export const HELP_OPENED_KEY = "life-dashboard-help-opened";
 
 export function readStoredData(): StoredData {
   if (typeof window === "undefined") {
-    return { areas: initialAreas, brainItems: initialBrainItems };
+    return {
+  areas: initialAreas,
+  brainItems: initialBrainItems,
+  updatedAt: new Date().toISOString(),
+};
   }
 
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) {
-      return { areas: initialAreas, brainItems: initialBrainItems };
+      return {
+  areas: initialAreas,
+  brainItems: initialBrainItems,
+  updatedAt: new Date().toISOString(),
+};
     }
 
     const parsed = JSON.parse(raw) as {
@@ -40,9 +48,13 @@ export function readStoredData(): StoredData {
       : initialBrainItems;
 
     return {
-      areas: areas.length ? areas : initialAreas,
-      brainItems,
-    };
+  areas: areas.length ? areas : initialAreas,
+  brainItems,
+  updatedAt:
+    typeof parsed.updatedAt === "string"
+      ? parsed.updatedAt
+      : new Date().toISOString(),
+};
   } catch {
     return { areas: initialAreas, brainItems: initialBrainItems };
   }

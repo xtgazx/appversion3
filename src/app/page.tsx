@@ -50,8 +50,7 @@ import {
 export default function Page() {
 const [areas, setAreas] = useState<Area[]>([]);
 const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
-  const [updatedAt, setUpdatedAt] = useState<string>(new Date().toISOString());
-  const [tab, setTab] = useState<TabKey>("areas");
+  const [updatedAt, setUpdatedAt] = useState<string>("");  const [tab, setTab] = useState<TabKey>("areas");
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [saveMessage, setSaveMessage] = useState("");
@@ -82,7 +81,8 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const [onboardingStep, setOnboardingStep] = useState(0);
 
   useEffect(() => {
-  saveStoredData({ areas, brainItems, updatedAt });
+    const now = new Date().toISOString();
+  saveStoredData({ areas, brainItems, updatedAt: now });
     
   if (!hasInitializedSyncRef.current) return;
 
@@ -105,24 +105,43 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   let isMounted = true;
 
   async function loadCloud() {
-    try {
-      const res = await fetch("/api/load-state", { cache: "no-store" });
-      const json = await res.json();
+  const local = readStoredData();
 
-      if (!isMounted) return;
+  try {
+    const res = await fetch("/api/load-state", { cache: "no-store" });
+    const json = await res.json();
 
-      if (json.success && json.data) {
-        setAreas(json.data.areas ?? []);
-        setBrainItems(json.data.brainItems ?? []);
-      }
-    } catch (e) {
-      console.error("cloud load failed", e);
-    } finally {
-      if (isMounted) {
-        hasInitializedSyncRef.current = true;
-      }
+    if (!isMounted) return;
+
+    const cloud = json.success ? json.data : null;
+
+    const localTime = new Date(local.updatedAt || 0).getTime();
+    const cloudTime = new Date(cloud?.updatedAt || 0).getTime();
+
+    if (cloud && cloudTime > localTime) {
+  setAreas(cloud.areas ?? []);
+  setBrainItems(cloud.brainItems ?? []);
+  setUpdatedAt(cloud.updatedAt ?? new Date().toISOString());
+} else {
+  setAreas(local.areas ?? []);
+  setBrainItems(local.brainItems ?? []);
+  setUpdatedAt(local.updatedAt ?? new Date().toISOString());
+}
+  } catch (e) {
+    console.error("cloud load failed", e);
+
+    if (!isMounted) return;
+
+    const local = readStoredData();
+    setAreas(local.areas ?? []);
+    setBrainItems(local.brainItems ?? []);
+    setUpdatedAt(local.updatedAt ?? new Date().toISOString());
+  } finally {
+    if (isMounted) {
+      hasInitializedSyncRef.current = true;
     }
   }
+}
 
   loadCloud();
 

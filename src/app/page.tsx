@@ -1390,6 +1390,10 @@ const step = steps[onboardingStep];
                         No unsorted items left.
                       </div>
                     )}
+                  </div>
+                </Card>
+              </div>
+            )}
 
                     {!selectedArea && !selectedProject && tab === "review" && (
   <Card>
@@ -1409,10 +1413,7 @@ const step = steps[onboardingStep];
     </div>
   </Card>
 )}
-                  </div>
-                </Card>
-              </div>
-            )}
+            
           </div>
         </div>
 

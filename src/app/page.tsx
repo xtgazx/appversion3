@@ -897,6 +897,25 @@ const step = steps[onboardingStep];
               <Brain className="h-5 w-5" />
               Brain
             </button>
+
+            <button
+  type="button"
+  onClick={() => {
+    setSelectedAreaId(null);
+    setSelectedProjectId(null);
+    setTab("review");
+  }}
+  className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-medium ${
+    !selectedArea && !selectedProject && tab === "review"
+      ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-200"
+      : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+  }`}
+>
+  <Sparkles className="h-5 w-5" />
+  Review
+</button>
+
+            
           </div>
           <div className="mt-6 space-y-2 px-2 text-sm text-slate-500 dark:text-slate-400">
             <div>Areas {areas.length}</div>
@@ -1375,7 +1394,7 @@ const step = steps[onboardingStep];
         </div>
 
         <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md border-t border-slate-200 bg-white px-4 pb-5 pt-3 backdrop-blur-xl dark:border-slate-700 dark:bg-slate-900 md:hidden">
-          <div className="grid grid-cols-4 items-center gap-2 rounded-3xl border border-slate-200 bg-white p-2 shadow-2xl shadow-slate-200/70 dark:border-slate-700 dark:bg-slate-900 dark:shadow-black/40">
+          <div className="grid grid-cols-5 items-center gap-2 rounded-3xl border border-slate-200 bg-white p-2 shadow-2xl shadow-slate-200/70 dark:border-slate-700 dark:bg-slate-900 dark:shadow-black/40">
             <BottomTab
               active={!selectedArea && !selectedProject && tab === "areas"}
               icon={Home}
@@ -1416,6 +1435,16 @@ const step = steps[onboardingStep];
                 setTab("brain");
               }}
             />
+            <BottomTab
+  active={!selectedArea && !selectedProject && tab === "review"}
+  icon={Sparkles}
+  label="Review"
+  onClick={() => {
+    setSelectedAreaId(null);
+    setSelectedProjectId(null);
+    setTab("review");
+  }}
+/>
           </div>
         </div>
 

@@ -209,31 +209,10 @@ export function AreaDetailView({
             <ClipboardList className="h-4 w-4" />
             Projects
           </div>
-          <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-            Open a project to manage nested tasks
-          </div>
         </div>
 
         <div className="space-y-3 border-t border-slate-200 px-5 pb-5 pt-4 dark:border-slate-700">
-          <div className="flex gap-2">
-            <input
-              value={newProjectName}
-              onChange={(e) => setNewProjectName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") onAddProject(selectedArea.id);
-              }}
-              placeholder="Add project"
-              className="h-10 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
-            />
-            <button
-              type="button"
-              onClick={() => onAddProject(selectedArea.id)}
-              className="rounded-2xl bg-indigo-600 px-4 py-2 text-white"
-            >
-              Add Project
-            </button>
-          </div>
-
+          
           {selectedArea.projects.length ? (
             selectedArea.projects.map((project) => (
               <div

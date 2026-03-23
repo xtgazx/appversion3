@@ -32,6 +32,7 @@ export function AreaDetailView({
   onCycleAreaColor,
   onDeleteArea,
   onSetAreaIcon,
+  onOpenAddProject,
   onAddProject,
   onOpenProject,
   onDeleteProject,
@@ -65,6 +66,7 @@ export function AreaDetailView({
   onCycleAreaColor: (areaId: string) => void;
   onDeleteArea: (areaId: string) => void;
   onSetAreaIcon: (areaId: string, iconKey: IconKey) => void;
+  onOpenAddProject: () => void;
   onAddProject: (areaId: string) => void;
   onOpenProject: (projectId: string) => void;
   onDeleteProject: (areaId: string, projectId: string) => void;
@@ -205,11 +207,21 @@ export function AreaDetailView({
 
       <Card className="border-l-4 border-l-slate-400 bg-white dark:bg-slate-800 md:col-span-1">
         <div className="px-5 pb-3 pt-5">
-          <div className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-            <ClipboardList className="h-4 w-4" />
-            Projects
-          </div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
+          <ClipboardList className="h-4 w-4" />
+          Projects
         </div>
+
+    <button
+      type="button"
+      onClick={() => onOpenAddProject()}
+      className="rounded-full bg-indigo-600 px-3 py-2 text-sm font-medium text-white"
+    >
+      Add Project
+    </button>
+  </div>
+</div>
 
         <div className="space-y-3 border-t border-slate-200 px-5 pb-5 pt-4 dark:border-slate-700">
           

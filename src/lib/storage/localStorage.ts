@@ -33,6 +33,7 @@ export function readStoredData(): StoredData {
     const parsed = JSON.parse(raw) as {
       areas?: unknown[];
       brainItems?: unknown[];
+      updatedAt?: unknown;
     };
 
     const areas = Array.isArray(parsed.areas)

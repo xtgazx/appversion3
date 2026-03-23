@@ -47,10 +47,9 @@ import {
 } from "../lib/storage/localStorage";
 
 export default function Page() {
-  const stored = readStoredData();
+const [areas, setAreas] = useState<Area[]>([]);
+const [brainItems, setBrainItems] = useState([]);
   const [tab, setTab] = useState<TabKey>("areas");
-  const [areas, setAreas] = useState<Area[]>(stored.areas);
-  const [brainItems, setBrainItems] = useState(stored.brainItems);
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [saveMessage, setSaveMessage] = useState("");

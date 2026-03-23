@@ -58,6 +58,7 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const [editingAreaIconId, setEditingAreaIconId] = useState<string | null>(null);
   const [ideasExpanded, setIdeasExpanded] = useState(true);
   const [showNewArea, setShowNewArea] = useState(false);
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   const [newAreaName, setNewAreaName] = useState("");
   const [newAreaColor, setNewAreaColor] =
     useState<(typeof areaColorOptions)[number]>(defaultColor);
@@ -454,6 +455,7 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
       )
     );
     setNewProjectName("");
+    setShowAddProjectModal(false);
     setSelectedProjectId(projectId);
   }
 
@@ -1095,6 +1097,7 @@ const step = steps[onboardingStep];
                 onCycleAreaColor={cycleAreaColor}
                 onDeleteArea={deleteArea}
                 onSetAreaIcon={setAreaIcon}
+                onOpenAddProject={() => setShowAddProjectModal(true)}
                 onAddProject={addProject}
                 onOpenProject={(projectId) => setSelectedProjectId(projectId)}
                 onDeleteProject={deleteProject}
@@ -1491,7 +1494,67 @@ const step = steps[onboardingStep];
 />
           </div>
         </div>
+        
+      {showAddProjectModal && selectedArea && (
+  <ModalShell>
+    <Card className="w-full max-w-md">
+      <div className="space-y-4 px-5 py-5">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
+              New Project
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setShowAddProjectModal(false);
+              setNewProjectName("");
+            }}
+            className="rounded-full border border-slate-200 bg-white p-2 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
 
+        <input
+          value={newProjectName}
+          onChange={(e) => setNewProjectName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              addProject(selectedArea.id);
+              setShowAddProjectModal(false);
+            }
+          }}
+          placeholder="Project name"
+          autoFocus
+          className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+        />
+
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              addProject(selectedArea.id);
+            }}
+            className="rounded-2xl bg-indigo-600 px-4 py-2 text-white"
+          >
+            Create
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setNewProjectName("");
+            }}
+            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </Card>
+  </ModalShell>
+)}
         <NewAreaModal
           open={showNewArea}
           newAreaName={newAreaName}

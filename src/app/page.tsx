@@ -63,6 +63,8 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const [ideasExpanded, setIdeasExpanded] = useState(true);
   const [showNewArea, setShowNewArea] = useState(false);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
+  const [showAddIdeaModal, setShowAddIdeaModal] = useState(false);
   const [newAreaName, setNewAreaName] = useState("");
   const [newAreaColor, setNewAreaColor] =
     useState<(typeof areaColorOptions)[number]>(defaultColor);
@@ -1085,40 +1087,42 @@ const step = steps[onboardingStep];
 
             {selectedArea && !selectedProject && (
               <AreaDetailView
-                selectedArea={selectedArea}
-                editingAreaIconId={editingAreaIconId}
-                ideasExpanded={ideasExpanded}
-                newProjectName={newProjectName}
-                newAreaTaskTitle={newAreaTaskTitle}
-                newIdeaTitle={newIdeaTitle}
-                setNewProjectName={setNewProjectName}
-                setNewAreaTaskTitle={setNewAreaTaskTitle}
-                setNewIdeaTitle={setNewIdeaTitle}
-                setIdeasExpanded={setIdeasExpanded}
-                setEditingAreaIconId={setEditingAreaIconId}
-                setAreas={setAreas}
-                onRenameArea={renameArea}
-                onCycleAreaColor={cycleAreaColor}
-                onDeleteArea={deleteArea}
-                onSetAreaIcon={setAreaIcon}
-                onOpenAddProject={() => setShowAddProjectModal(true)}
-                onAddProject={addProject}
-                onOpenProject={(projectId) => setSelectedProjectId(projectId)}
-                onDeleteProject={deleteProject}
-                onAddAreaTask={addAreaTask}
-                onToggleTask={toggleTask}
-                onSetTaskTitle={setTaskTitle}
-                onSetTaskDate={setTaskDate}
-                onAddToWeek={addToWeek}
-                onAddToToday={addToToday}
-                onRemoveFromWeek={removeFromWeek}
-                onRemoveFromToday={removeFromToday}
-                onDeleteTask={deleteTask}
-                onCycleTaskDuration={cycleTaskDuration}
-                onAddIdea={addIdea}
-                onDeleteIdea={deleteIdea}
-                onConvertIdea={convertIdea}
-              />
+  selectedArea={selectedArea}
+  editingAreaIconId={editingAreaIconId}
+  ideasExpanded={ideasExpanded}
+  setIdeasExpanded={setIdeasExpanded}
+  setEditingAreaIconId={setEditingAreaIconId}
+  setAreas={setAreas}
+  onRenameArea={renameArea}
+  onCycleAreaColor={cycleAreaColor}
+  onDeleteArea={deleteArea}
+  onSetAreaIcon={setAreaIcon}
+  onOpenAddProject={() => {
+    setNewProjectName("");
+    setShowAddProjectModal(true);
+  }}
+  onOpenAddTask={() => {
+    setNewAreaTaskTitle("");
+    setShowAddTaskModal(true);
+  }}
+  onOpenAddIdea={() => {
+    setNewIdeaTitle("");
+    setShowAddIdeaModal(true);
+  }}
+  onOpenProject={(projectId) => setSelectedProjectId(projectId)}
+  onDeleteProject={deleteProject}
+  onToggleTask={toggleTask}
+  onSetTaskTitle={setTaskTitle}
+  onSetTaskDate={setTaskDate}
+  onAddToWeek={addToWeek}
+  onAddToToday={addToToday}
+  onRemoveFromWeek={removeFromWeek}
+  onRemoveFromToday={removeFromToday}
+  onDeleteTask={deleteTask}
+  onCycleTaskDuration={cycleTaskDuration}
+  onDeleteIdea={deleteIdea}
+  onConvertIdea={convertIdea}
+/>
             )}
 
             {selectedArea && selectedProject && (
@@ -1306,6 +1310,133 @@ const step = steps[onboardingStep];
     </Card>
   </ModalShell>
 )}
+
+    {showAddTaskModal && selectedArea && (
+  <ModalShell>
+    <Card className="w-full max-w-md">
+      <div className="space-y-4 px-5 py-5">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
+              New Task
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setShowAddTaskModal(false);
+              setNewAreaTaskTitle("");
+            }}
+            className="rounded-full border border-slate-200 bg-white p-2 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <input
+          value={newAreaTaskTitle}
+          onChange={(e) => setNewAreaTaskTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              addAreaTask(selectedArea.id);
+              setShowAddTaskModal(false);
+            }
+          }}
+          placeholder="Task name"
+          autoFocus
+          className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+        />
+
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              addAreaTask(selectedArea.id);
+              setShowAddTaskModal(false);
+            }}
+            className="rounded-2xl bg-indigo-600 px-4 py-2 text-white"
+          >
+            Add
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setShowAddTaskModal(false);
+              setNewAreaTaskTitle("");
+            }}
+            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </Card>
+  </ModalShell>
+)}
+
+       {showAddIdeaModal && selectedArea && (
+  <ModalShell>
+    <Card className="w-full max-w-md">
+      <div className="space-y-4 px-5 py-5">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
+              New Idea
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setShowAddIdeaModal(false);
+              setNewIdeaTitle("");
+            }}
+            className="rounded-full border border-slate-200 bg-white p-2 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <input
+          value={newIdeaTitle}
+          onChange={(e) => setNewIdeaTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              addIdea(selectedArea.id);
+              setShowAddIdeaModal(false);
+            }
+          }}
+          placeholder="Idea"
+          autoFocus
+          className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+        />
+
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              addIdea(selectedArea.id);
+              setShowAddIdeaModal(false);
+            }}
+            className="rounded-2xl bg-indigo-600 px-4 py-2 text-white"
+          >
+            Add
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setShowAddIdeaModal(false);
+              setNewIdeaTitle("");
+            }}
+            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </Card>
+  </ModalShell>
+)}
+        
         <NewAreaModal
           open={showNewArea}
           newAreaName={newAreaName}

@@ -41,6 +41,10 @@ import {
   selectTodayTasks,
   selectWeekTasks,
 } from "../features/tasks/taskSelectors";
+import { WeekView } from "../features/week/components/WeekView";
+import { TodayView } from "../features/today/components/TodayView";
+import { BrainDumpView } from "../features/brain/components/BrainDumpView";
+import { ReviewView } from "../features/review/components/ReviewView";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import {
   hasCompletedOnboarding,
@@ -1140,301 +1144,48 @@ const step = steps[onboardingStep];
             )}
 
             {!selectedArea && !selectedProject && tab === "week" && (
-              <Card>
-                <div className="px-5 pb-3 pt-5">
-                  <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                    Weekly queue
-                  </div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">
-                    Tasks added from areas and projects
-                  </div>
-                </div>
-                <div className="space-y-3 px-5 pb-5">
-                  {weekTasks.length ? (
-                    weekTasks.map((task) => (
-                      <TaskCard
-                        key={task.id}
-                        task={task}
-                        areaName={task.areaName}
-                        projectName={task.projectName}
-                        showHint={false}
-                        viewMode="week"
-                        onToggle={() =>
-                          toggleTask(task.areaId, task.projectId, task.id, task.scope)
-                        }
-                        onSaveTitle={(value) =>
-                          setTaskTitle(
-                            task.areaId,
-                            task.projectId,
-                            task.id,
-                            task.scope,
-                            value
-                          )
-                        }
-                        onSaveDue={(value) =>
-                          setTaskDate(
-                            task.areaId,
-                            task.projectId,
-                            task.id,
-                            task.scope,
-                            value
-                          )
-                        }
-                        onAddWeek={() =>
-                          addToWeek(task.areaId, task.projectId, task.id, task.scope)
-                        }
-                        onAddToday={() =>
-                          addToToday(task.areaId, task.projectId, task.id, task.scope)
-                        }
-                        onRemoveWeek={() =>
-                          removeFromWeek(
-                            task.areaId,
-                            task.projectId,
-                            task.id,
-                            task.scope
-                          )
-                        }
-                        onRemoveToday={() =>
-                          removeFromToday(
-                            task.areaId,
-                            task.projectId,
-                            task.id,
-                            task.scope
-                          )
-                        }
-                        onDelete={() =>
-                          deleteTask(
-                            task.areaId,
-                            task.projectId,
-                            task.id,
-                            task.title,
-                            task.scope
-                          )
-                        }
-                        onCycleDuration={() =>
-                          cycleTaskDuration(
-                            task.areaId,
-                            task.projectId,
-                            task.id,
-                            task.scope
-                          )
-                        }
-                      />
-                    ))
-                  ) : (
-                    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-                      Nothing in This Week yet.
-                    </div>
-                  )}
-                </div>
-              </Card>
-            )}
+  <WeekView
+    weekTasks={weekTasks}
+    toggleTask={toggleTask}
+    setTaskTitle={setTaskTitle}
+    setTaskDate={setTaskDate}
+    addToWeek={addToWeek}
+    addToToday={addToToday}
+    removeFromWeek={removeFromWeek}
+    removeFromToday={removeFromToday}
+    deleteTask={deleteTask}
+    cycleTaskDuration={cycleTaskDuration}
+  />
+)}
 
-            {!selectedArea && !selectedProject && tab === "today" && (
-              <Card>
-                <div className="px-5 pb-3 pt-5">
-                  <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                    Today
-                  </div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">
-                    What matters now
-                  </div>
-                </div>
-                <div className="space-y-3 px-5 pb-5">
-                  {todayTasks.length ? (
-                    todayTasks.map((task) => (
-                      <TaskCard
-                        key={task.id}
-                        task={task}
-                        areaName={task.areaName}
-                        projectName={task.projectName}
-                        showHint={false}
-                        viewMode="today"
-                        onToggle={() =>
-                          toggleTask(task.areaId, task.projectId, task.id, task.scope)
-                        }
-                        onSaveTitle={(value) =>
-                          setTaskTitle(
-                            task.areaId,
-                            task.projectId,
-                            task.id,
-                            task.scope,
-                            value
-                          )
-                        }
-                        onSaveDue={(value) =>
-                          setTaskDate(
-                            task.areaId,
-                            task.projectId,
-                            task.id,
-                            task.scope,
-                            value
-                          )
-                        }
-                        onAddWeek={() =>
-                          addToWeek(task.areaId, task.projectId, task.id, task.scope)
-                        }
-                        onAddToday={() =>
-                          addToToday(task.areaId, task.projectId, task.id, task.scope)
-                        }
-                        onRemoveWeek={() =>
-                          removeFromWeek(
-                            task.areaId,
-                            task.projectId,
-                            task.id,
-                            task.scope
-                          )
-                        }
-                        onRemoveToday={() =>
-                          removeFromToday(
-                            task.areaId,
-                            task.projectId,
-                            task.id,
-                            task.scope
-                          )
-                        }
-                        onDelete={() =>
-                          deleteTask(
-                            task.areaId,
-                            task.projectId,
-                            task.id,
-                            task.title,
-                            task.scope
-                          )
-                        }
-                        onCycleDuration={() =>
-                          cycleTaskDuration(
-                            task.areaId,
-                            task.projectId,
-                            task.id,
-                            task.scope
-                          )
-                        }
-                      />
-                    ))
-                  ) : (
-                    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-                      Nothing in Today yet.
-                    </div>
-                  )}
-                </div>
-              </Card>
-            )}
+           {!selectedArea && !selectedProject && tab === "today" && (
+  <TodayView
+    todayTasks={todayTasks}
+    toggleTask={toggleTask}
+    setTaskTitle={setTaskTitle}
+    setTaskDate={setTaskDate}
+    addToWeek={addToWeek}
+    addToToday={addToToday}
+    removeFromWeek={removeFromWeek}
+    removeFromToday={removeFromToday}
+    deleteTask={deleteTask}
+    cycleTaskDuration={cycleTaskDuration}
+  />
+)}
 
-            {!selectedArea && !selectedProject && tab === "brain" && (
-              <div className="space-y-4">
-                <Card>
-                  <div className="px-5 pb-3 pt-5">
-                    <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                      Brain Dump
-                    </div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400">
-                      Capture first, organize later
-                    </div>
-                  </div>
-                  <div className="space-y-3 px-5 pb-5">
-                    <textarea
-                      value={brainInput}
-                      onChange={(e) => setBrainInput(e.target.value)}
-                      placeholder="Type a thought, task, project idea, reminder, or loose note..."
-                      className="min-h-[110px] w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                    />
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        type="button"
-                        onClick={addBrainItem}
-                        className="rounded-2xl bg-fuchsia-600 px-4 py-2 text-white"
-                      >
-                        Add to Brain Dump
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setBrainInput("")}
-                        className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
-                      >
-                        Clear
-                      </button>
-                    </div>
-                  </div>
-                </Card>
-
-                <Card>
-                  <div className="px-5 pb-3 pt-5 text-base font-semibold text-slate-900 dark:text-slate-100">
-                    Unsorted items
-                  </div>
-                  <div className="space-y-3 px-5 pb-5">
-                    {brainItems.length ? (
-                      brainItems.map((item) => (
-                        <div
-                          key={item.id}
-                          className="rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-900"
-                        >
-                          <div className="mb-2">
-                            <InlineText
-                              value={item.text}
-                              onSave={(value) =>
-                                setBrainItems((current) =>
-                                  current.map((brain) =>
-                                    brain.id !== item.id
-                                      ? brain
-                                      : { ...brain, text: value }
-                                  )
-                                )
-                              }
-                              displayClassName="w-full rounded-xl px-1 py-1 text-left text-sm text-slate-800 transition hover:bg-slate-50 dark:text-slate-100 dark:hover:bg-slate-700/60"
-                            />
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            <button
-                              type="button"
-                              onClick={() => openBrainConvert(item.id)}
-                              className="rounded-full bg-indigo-100 px-2.5 py-1 text-[11px] font-semibold text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-200"
-                            >
-                              Convert
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setConfirmState({
-                                  kind: "brain",
-                                  itemId: item.id,
-                                  label: item.text,
-                                })
-                              }
-                              className="rounded-full bg-red-100 px-2.5 py-1 text-[11px] font-semibold text-red-700 dark:bg-red-950/40 dark:text-red-200"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-                        No unsorted items left.
-                      </div>
-                    )}
-                  </div>
-                </Card>
-              </div>
-            )}
+           {!selectedArea && !selectedProject && tab === "brain" && (
+  <BrainDumpView
+    brainInput={brainInput}
+    setBrainInput={setBrainInput}
+    addBrainItem={addBrainItem}
+    brainItems={brainItems}
+    openBrainConvert={openBrainConvert}
+    setConfirmState={setConfirmState}
+  />
+)}
 
                     {!selectedArea && !selectedProject && tab === "review" && (
-  <Card>
-    <div className="px-5 pb-3 pt-5">
-      <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
-        Weekly Review
-      </div>
-      <div className="text-sm text-slate-600 dark:text-slate-400">
-        Get your system clean and ready for the week
-      </div>
-    </div>
-
-    <div className="px-5 pb-5">
-      <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-        Review screen coming next.
-      </div>
-    </div>
-  </Card>
+  <ReviewView />
 )}
             
           </div>

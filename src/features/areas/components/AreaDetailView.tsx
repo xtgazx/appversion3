@@ -19,12 +19,6 @@ export function AreaDetailView({
   selectedArea,
   editingAreaIconId,
   ideasExpanded,
-  newProjectName,
-  newAreaTaskTitle,
-  newIdeaTitle,
-  setNewProjectName,
-  setNewAreaTaskTitle,
-  setNewIdeaTitle,
   setIdeasExpanded,
   setEditingAreaIconId,
   setAreas,
@@ -33,10 +27,10 @@ export function AreaDetailView({
   onDeleteArea,
   onSetAreaIcon,
   onOpenAddProject,
-  onAddProject,
+  onOpenAddTask,
+  onOpenAddIdea,
   onOpenProject,
   onDeleteProject,
-  onAddAreaTask,
   onToggleTask,
   onSetTaskTitle,
   onSetTaskDate,
@@ -46,19 +40,12 @@ export function AreaDetailView({
   onRemoveFromToday,
   onDeleteTask,
   onCycleTaskDuration,
-  onAddIdea,
   onDeleteIdea,
   onConvertIdea,
 }: {
   selectedArea: Area;
   editingAreaIconId: string | null;
   ideasExpanded: boolean;
-  newProjectName: string;
-  newAreaTaskTitle: string;
-  newIdeaTitle: string;
-  setNewProjectName: React.Dispatch<React.SetStateAction<string>>;
-  setNewAreaTaskTitle: React.Dispatch<React.SetStateAction<string>>;
-  setNewIdeaTitle: React.Dispatch<React.SetStateAction<string>>;
   setIdeasExpanded: React.Dispatch<React.SetStateAction<boolean>>;
   setEditingAreaIconId: React.Dispatch<React.SetStateAction<string | null>>;
   setAreas: React.Dispatch<React.SetStateAction<Area[]>>;
@@ -67,10 +54,10 @@ export function AreaDetailView({
   onDeleteArea: (areaId: string) => void;
   onSetAreaIcon: (areaId: string, iconKey: IconKey) => void;
   onOpenAddProject: () => void;
-  onAddProject: (areaId: string) => void;
+  onOpenAddTask: () => void;
+  onOpenAddIdea: () => void;
   onOpenProject: (projectId: string) => void;
   onDeleteProject: (areaId: string, projectId: string) => void;
-  onAddAreaTask: (areaId: string) => void;
   onToggleTask: (
     areaId: string,
     projectId: string | null,
@@ -128,7 +115,6 @@ export function AreaDetailView({
     taskId: string,
     scope: "project" | "area"
   ) => void;
-  onAddIdea: (areaId: string) => void;
   onDeleteIdea: (areaId: string, ideaId: string) => void;
   onConvertIdea: (areaId: string, ideaId: string) => void;
 }) {
@@ -207,24 +193,23 @@ export function AreaDetailView({
 
       <Card className="border-l-4 border-l-slate-400 bg-white dark:bg-slate-800 md:col-span-1">
         <div className="px-5 pb-3 pt-5">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-          <ClipboardList className="h-4 w-4" />
-          Projects
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
+              <ClipboardList className="h-4 w-4" />
+              Projects
+            </div>
+
+            <button
+              type="button"
+              onClick={onOpenAddProject}
+              className="rounded-full bg-indigo-600 px-3 py-2 text-sm font-medium text-white"
+            >
+              Add Project
+            </button>
+          </div>
         </div>
 
-    <button
-      type="button"
-      onClick={() => onOpenAddProject()}
-      className="rounded-full bg-indigo-600 px-3 py-2 text-sm font-medium text-white"
-    >
-      Add Project
-    </button>
-  </div>
-</div>
-
         <div className="space-y-3 border-t border-slate-200 px-5 pb-5 pt-4 dark:border-slate-700">
-          
           {selectedArea.projects.length ? (
             selectedArea.projects.map((project) => (
               <div
@@ -279,35 +264,23 @@ export function AreaDetailView({
 
       <Card className="border-l-4 border-l-green-400 bg-slate-50/90 dark:bg-slate-900/90 md:col-span-1">
         <div className="px-5 pb-3 pt-5">
-          <div className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-            <CheckCircle2 className="h-4 w-4" />
-            Tasks
-          </div>
-          <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-            One-off tasks for this area
-          </div>
-        </div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
+              <CheckCircle2 className="h-4 w-4" />
+              Tasks
+            </div>
 
-        <div className="space-y-3 border-t border-slate-200 px-5 pb-5 pt-4 dark:border-slate-700">
-          <div className="flex gap-2">
-            <input
-              value={newAreaTaskTitle}
-              onChange={(e) => setNewAreaTaskTitle(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") onAddAreaTask(selectedArea.id);
-              }}
-              placeholder="Add one-off task"
-              className="h-10 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
-            />
             <button
               type="button"
-              onClick={() => onAddAreaTask(selectedArea.id)}
-              className="rounded-2xl bg-indigo-600 px-4 py-2 text-white"
+              onClick={onOpenAddTask}
+              className="rounded-full bg-indigo-600 px-3 py-2 text-sm font-medium text-white"
             >
               Add Task
             </button>
           </div>
+        </div>
 
+        <div className="space-y-3 border-t border-slate-200 px-5 pb-5 pt-4 dark:border-slate-700">
           {selectedArea.tasks.length ? (
             selectedArea.tasks.map((task) => (
               <TaskCard
@@ -359,49 +332,37 @@ export function AreaDetailView({
 
       <Card className="border-l-4 border-l-indigo-400 bg-indigo-50/70 dark:bg-indigo-950/30 md:col-span-2">
         <div className="px-5 pb-3 pt-5">
-          <button
-            type="button"
-            onClick={() => setIdeasExpanded((current) => !current)}
-            className="flex w-full items-center justify-between text-left"
-          >
-            <div>
-              <div className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-                <Lightbulb className="h-4 w-4" />
-                Ideas
+          <div className="flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => setIdeasExpanded((current) => !current)}
+              className="flex flex-1 items-center justify-between text-left"
+            >
+              <div>
+                <div className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
+                  <Lightbulb className="h-4 w-4" />
+                  Ideas
+                </div>
               </div>
-              <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                Lightweight ideas before they become projects
-              </div>
-            </div>
-            {ideasExpanded ? (
-              <ChevronDown className="h-4 w-4 text-slate-400" />
-            ) : (
-              <ChevronRight className="h-4 w-4 text-slate-400" />
-            )}
-          </button>
+              {ideasExpanded ? (
+                <ChevronDown className="h-4 w-4 text-slate-400" />
+              ) : (
+                <ChevronRight className="h-4 w-4 text-slate-400" />
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={onOpenAddIdea}
+              className="rounded-full bg-indigo-600 px-3 py-2 text-sm font-medium text-white"
+            >
+              Add Idea
+            </button>
+          </div>
         </div>
 
         {ideasExpanded && (
           <div className="space-y-3 border-t border-slate-200/70 px-5 pb-5 pt-4 dark:border-slate-700">
-            <div className="flex gap-2">
-              <input
-                value={newIdeaTitle}
-                onChange={(e) => setNewIdeaTitle(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") onAddIdea(selectedArea.id);
-                }}
-                placeholder="Add an idea"
-                className="h-10 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
-              />
-              <button
-                type="button"
-                onClick={() => onAddIdea(selectedArea.id)}
-                className="rounded-2xl bg-indigo-600 px-4 py-2 text-white"
-              >
-                Add
-              </button>
-            </div>
-
             {selectedArea.ideas.length ? (
               selectedArea.ideas.map((idea) => (
                 <div

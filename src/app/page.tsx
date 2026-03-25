@@ -497,6 +497,7 @@ saveStoredData({ areas, brainItems, updatedAt: now });
       )
     );
     setNewAreaTaskTitle("");
+    setShowAddTaskModal(false);
   }
 
   function addIdea(areaId: string) {
@@ -513,6 +514,7 @@ saveStoredData({ areas, brainItems, updatedAt: now });
       )
     );
     setNewIdeaTitle("");
+    setShowAddIdeaModal(false);
   }
 
   function deleteIdea(areaId: string, ideaId: string) {
@@ -1272,7 +1274,6 @@ const step = steps[onboardingStep];
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               addProject(selectedArea.id);
-              setShowAddProjectModal(false);
             }
           }}
           placeholder="Project name"
@@ -1293,6 +1294,7 @@ const step = steps[onboardingStep];
           <button
             type="button"
             onClick={() => {
+              setShowAddProjectModal(false);
               setNewProjectName("");
             }}
             className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
@@ -1332,9 +1334,7 @@ const step = steps[onboardingStep];
           onChange={(e) => setNewAreaTaskTitle(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              addAreaTask(selectedArea.id);
-              setShowAddTaskModal(false);
-            }
+              addAreaTask(selectedArea.id);            }
           }}
           placeholder="Task name"
           autoFocus
@@ -1346,7 +1346,6 @@ const step = steps[onboardingStep];
             type="button"
             onClick={() => {
               addAreaTask(selectedArea.id);
-              setShowAddTaskModal(false);
             }}
             className="rounded-2xl bg-indigo-600 px-4 py-2 text-white"
           >
@@ -1396,7 +1395,6 @@ const step = steps[onboardingStep];
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               addIdea(selectedArea.id);
-              setShowAddIdeaModal(false);
             }
           }}
           placeholder="Idea"
@@ -1409,7 +1407,6 @@ const step = steps[onboardingStep];
             type="button"
             onClick={() => {
               addIdea(selectedArea.id);
-              setShowAddIdeaModal(false);
             }}
             className="rounded-2xl bg-indigo-600 px-4 py-2 text-white"
           >

@@ -976,7 +976,7 @@ const step = steps[onboardingStep];
               </span>
             </div>
             <div className="mb-2 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2">
                 {(selectedArea || selectedProject) && (
                   <button
                     type="button"
@@ -997,7 +997,9 @@ const step = steps[onboardingStep];
                     {headerSub}
                   </p>
                 </div>
-              </div>        
+              </div>   
+              
+ <div className="flex items-center gap-2 shrink-0">
 
 <SignedOut>
   <SignInButton mode="modal">
@@ -1013,7 +1015,7 @@ const step = steps[onboardingStep];
 <SignedIn>
   <UserButton />
 </SignedIn>
-                
+                 </div>
               </div>
             </div>
           </div>

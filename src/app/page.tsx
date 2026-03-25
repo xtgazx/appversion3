@@ -975,47 +975,48 @@ const step = steps[onboardingStep];
                 {headerEyebrow}
               </span>
             </div>
-            <div className="mb-2 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                {(selectedArea || selectedProject) && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (selectedProject) setSelectedProjectId(null);
-                      else setSelectedAreaId(null);
-                    }}
-                    className="rounded-full border border-slate-200 bg-white p-2 text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                  </button>
-                )}
-                <div>
-                  <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-                    {headerTitle}
-                  </h1>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
-                    {headerSub}
-                  </p>
-                </div>
-              
- <div className="flex items-center gap-2 shrink-0">
+            <div className="mb-2 flex w-full items-start gap-3">
+  <div className="flex min-w-0 flex-1 items-center gap-2">
+    {(selectedArea || selectedProject) && (
+      <button
+        type="button"
+        onClick={() => {
+          if (selectedProject) setSelectedProjectId(null);
+          else setSelectedAreaId(null);
+        }}
+        className="rounded-full border border-slate-200 bg-white p-2 text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+      >
+        <ArrowLeft className="h-4 w-4" />
+      </button>
+    )}
 
-<SignedOut>
-  <SignInButton mode="modal">
-    <button
-      type="button"
-      className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-    >
-      Sign in
-    </button>
-  </SignInButton>
-</SignedOut>
+    <div className="min-w-0">
+      <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+        {headerTitle}
+      </h1>
+      <p className="text-xs text-slate-600 dark:text-slate-400">
+        {headerSub}
+      </p>
+    </div>
+  </div>
 
-<SignedIn>
-  <UserButton />
-</SignedIn>
-                 </div>
-              </div>
+  <div className="ml-auto flex shrink-0 items-center gap-2 self-start">
+    <SignedOut>
+      <SignInButton mode="modal">
+        <button
+          type="button"
+          className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+        >
+          Sign in
+        </button>
+      </SignInButton>
+    </SignedOut>
+
+    <SignedIn>
+      <UserButton />
+    </SignedIn>
+  </div>
+</div>
             </div>
           </div>
 

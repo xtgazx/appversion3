@@ -3,7 +3,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
-  Bell,
   Brain,
   CalendarDays,
   CheckCircle2,
@@ -1004,20 +1003,7 @@ const step = steps[onboardingStep];
                     {headerSub}
                   </p>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={showSaved}
-                  className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-                >
-                  Save
-                </button>
-                {saveMessage && (
-                  <div className="text-xs text-slate-500 dark:text-slate-400">
-                    {saveMessage}
-                  </div>
-                )}        
+              </div>        
 
 <SignedOut>
   <SignInButton mode="modal">
@@ -1033,12 +1019,7 @@ const step = steps[onboardingStep];
 <SignedIn>
   <UserButton />
 </SignedIn>
-                <button
-                  type="button"
-                  className="rounded-full border border-slate-200 bg-white p-2 text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
-                >
-                  <Bell className="h-4 w-4" />
-                </button>
+                
               </div>
             </div>
           </div>

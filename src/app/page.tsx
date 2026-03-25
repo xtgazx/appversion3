@@ -99,12 +99,13 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
 
   saveTimerRef.current = window.setTimeout(() => {
     fetch("/api/save-state", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ areas, brainItems }),
-    }).catch(() => {});
+  method: "POST",
+  credentials: "include",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ areas, brainItems, updatedAt }),
+}).catch(() => {});
   }, 500);
 }, [areas, brainItems]);
 
@@ -115,7 +116,11 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const local = readStoredData();
 
   try {
-    const res = await fetch("/api/load-state", { cache: "no-store" });
+    const res = await fetch("/api/load-state", {
+      method: "GET",
+      cache: "no-store",
+      credentials: "include",
+    });
     console.log("LOAD RESPONSE STATUS:", res.status);
     const json = await res.json();
     console.log("LOAD JSON:", json);

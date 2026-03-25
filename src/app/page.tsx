@@ -56,7 +56,6 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const [updatedAt, setUpdatedAt] = useState<string>("");  const [tab, setTab] = useState<TabKey>("areas");
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [saveMessage, setSaveMessage] = useState("");
   const [areaMenuOpen, setAreaMenuOpen] = useState<string | null>(null);
   const [editingAreaIconId, setEditingAreaIconId] = useState<string | null>(null);
   const [ideasExpanded, setIdeasExpanded] = useState(true);
@@ -199,13 +198,6 @@ saveStoredData({ areas, brainItems, updatedAt: now });
   const weekTasks = useMemo(() => selectWeekTasks(allTasks), [allTasks]);
   const todayTasks = useMemo(() => selectTodayTasks(allTasks), [allTasks]);
   const completedTasks = useMemo(() => selectCompletedTasks(allTasks), [allTasks]);
-
-  function showSaved() {
-    saveStoredData({ areas, brainItems, updatedAt });
-    setSaveMessage("Saved");
-    if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = window.setTimeout(() => setSaveMessage(""), 1200);
-  }
 
   function openArea(areaId: string) {
     setSelectedAreaId(areaId);

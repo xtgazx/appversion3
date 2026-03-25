@@ -105,9 +105,7 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   useEffect(() => {
     if (!hasInitializedSyncRef.current) return;
 
-const now = new Date().toISOString();
-
-saveStoredData({ areas, brainItems, updatedAt: now });
+saveStoredData({ areas, brainItems, updatedAt });
 
   if (saveTimerRef.current) {
     window.clearTimeout(saveTimerRef.current);
@@ -120,7 +118,7 @@ saveStoredData({ areas, brainItems, updatedAt: now });
   headers: {
     "Content-Type": "application/json",
   },
-  body: JSON.stringify({ areas, brainItems, updatedAt: now }),
+  body: JSON.stringify({ areas, brainItems, updatedAt }),
 }).catch(() => {});
   }, 500);
 }, [areas, brainItems]);
@@ -228,6 +226,9 @@ if (cloud) {
   const todayTasks = useMemo(() => selectTodayTasks(allTasks), [allTasks]);
   const completedTasks = useMemo(() => selectCompletedTasks(allTasks), [allTasks]);
 
+  function touchUpdatedAt() {
+  setUpdatedAt(new Date().toISOString());
+}
 
   function openArea(areaId: string) {
     setSelectedAreaId(areaId);
@@ -295,6 +296,7 @@ if (cloud) {
     if (scope === "area") {
       updateAreaTask(areaId, taskId, (task) => ({ ...task, done: !task.done }));
     }
+    touchUpdatedAt();
   }
 
   function setTaskDate(
@@ -306,9 +308,11 @@ if (cloud) {
   ) {
     if (scope === "project" && projectId) {
       updateProjectTask(areaId, projectId, taskId, (task) => ({ ...task, due }));
+      touchUpdatedAt();
     }
     if (scope === "area") {
       updateAreaTask(areaId, taskId, (task) => ({ ...task, due }));
+      touchUpdatedAt();
     }
   }
 
@@ -321,9 +325,11 @@ if (cloud) {
   ) {
     if (scope === "project" && projectId) {
       updateProjectTask(areaId, projectId, taskId, (task) => ({ ...task, title }));
+      touchUpdatedAt();
     }
     if (scope === "area") {
       updateAreaTask(areaId, taskId, (task) => ({ ...task, title }));
+      touchUpdatedAt();
     }
   }
 
@@ -350,6 +356,7 @@ if (cloud) {
     if (scope === "area") {
       updateAreaTask(areaId, taskId, updater);
     }
+      touchUpdatedAt();
   }
 
   function addToWeek(
@@ -367,6 +374,7 @@ if (cloud) {
     if (scope === "area") {
       updateAreaTask(areaId, taskId, (task) => ({ ...task, inWeek: true }));
     }
+      touchUpdatedAt();
   }
 
   function addToToday(
@@ -389,6 +397,7 @@ if (cloud) {
         inToday: true,
       }));
     }
+      touchUpdatedAt();
   }
 
   function removeFromWeek(
@@ -411,6 +420,7 @@ if (cloud) {
         inToday: false,
       }));
     }
+      touchUpdatedAt();
   }
 
   function removeFromToday(
@@ -428,6 +438,7 @@ if (cloud) {
     if (scope === "area") {
       updateAreaTask(areaId, taskId, (task) => ({ ...task, inToday: false }));
     }
+      touchUpdatedAt();
   }
 
   function deleteTask(
@@ -468,6 +479,7 @@ if (cloud) {
     setNewAreaColor(defaultColor);
     setNewAreaIcon("clipboard");
     setShowNewArea(false);
+    touchUpdatedAt();
   }
 
   function addProject(areaId: string) {
@@ -497,6 +509,7 @@ if (cloud) {
     setNewProjectName("");
     setShowAddProjectModal(false);
     setSelectedProjectId(projectId);
+    touchUpdatedAt();
   }
 
   function addAreaTask(areaId: string) {
@@ -520,6 +533,7 @@ if (cloud) {
     );
     setNewAreaTaskTitle("");
     setShowAddTaskModal(false);
+    touchUpdatedAt();
   }
 
   function addIdea(areaId: string) {
@@ -537,6 +551,7 @@ if (cloud) {
     );
     setNewIdeaTitle("");
     setShowAddIdeaModal(false);
+    touchUpdatedAt();
   }
 
   function deleteIdea(areaId: string, ideaId: string) {
@@ -603,6 +618,7 @@ if (cloud) {
     setAreaMenuOpen(null);
     setEditingAreaIconId(null);
     setRenameAreaState(null);
+    touchUpdatedAt();
   }
 
   function setAreaIcon(areaId: string, iconKey: IconKey) {
@@ -611,6 +627,7 @@ if (cloud) {
         area.id !== areaId ? area : { ...area, iconKey }
       )
     );
+    touchUpdatedAt();
   }
 
   function cycleAreaColor(areaId: string) {
@@ -627,6 +644,7 @@ if (cloud) {
         };
       })
     );
+    touchUpdatedAt();
   }
 
   function deleteProject(areaId: string, projectId: string) {

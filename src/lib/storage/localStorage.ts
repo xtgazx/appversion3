@@ -69,6 +69,11 @@ export function saveStoredData(data: StoredData) {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
+export function clearStoredData() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(STORAGE_KEY);
+}
+
 export function hasCompletedOnboarding(): boolean {
   if (typeof window === "undefined") return false;
   return window.localStorage.getItem(ONBOARDING_KEY) === "true";

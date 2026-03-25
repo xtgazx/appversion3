@@ -83,6 +83,10 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const saveTimerRef = useRef<number | null>(null);
   const hasInitializedSyncRef = useRef(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [storageConflict, setStorageConflict] = useState<{
+  local: { areas: Area[]; brainItems: BrainItem[]; updatedAt: string };
+  cloud: { areas: Area[]; brainItems: BrainItem[]; updatedAt: string };
+} | null>(null);
   const [onboardingStep, setOnboardingStep] = useState(0);
 
   useEffect(() => {
@@ -136,7 +140,20 @@ saveStoredData({ areas, brainItems, updatedAt: now });
     console.log("LOCAL TIME:", localTime);
     console.log("CLOUD TIME:", cloudTime);
     
-    if (cloud && cloudTime > localTime) {
+const localHasData = hasMeaningfulData(local);
+const cloudHasData = cloud ? hasMeaningfulData(cloud) : false;
+
+// conflict case
+if (cloud && localHasData && cloudHasData) {
+  setStorageConflict({
+    local,
+    cloud,
+  });
+  return;
+}
+
+// no conflict → normal resolution
+if (cloud && cloudTime > localTime) {
   setAreas(cloud.areas ?? []);
   setBrainItems(cloud.brainItems ?? []);
   setUpdatedAt(cloud.updatedAt ?? new Date().toISOString());
@@ -198,6 +215,19 @@ saveStoredData({ areas, brainItems, updatedAt: now });
   const weekTasks = useMemo(() => selectWeekTasks(allTasks), [allTasks]);
   const todayTasks = useMemo(() => selectTodayTasks(allTasks), [allTasks]);
   const completedTasks = useMemo(() => selectCompletedTasks(allTasks), [allTasks]);
+  function hasMeaningfulData(data: {
+  areas: Area[];
+  brainItems: BrainItem[];
+}) {
+  if (data.brainItems.length > 0) return true;
+
+  return data.areas.some(
+    (area) =>
+      area.projects.length > 0 ||
+      area.tasks.length > 0 ||
+      area.ideas.length > 0
+  );
+}
 
   function openArea(areaId: string) {
     setSelectedAreaId(areaId);
@@ -726,7 +756,38 @@ saveStoredData({ areas, brainItems, updatedAt: now });
     setBrainConvertAreaId(areas[0]?.id ?? null);
     setBrainConvertType("project");
   }
+  function resolveStorageConflictWithLocal() {
+  if (!storageConflict) return;
 
+  setAreas(storageConflict.local.areas);
+  setBrainItems(storageConflict.local.brainItems);
+  setUpdatedAt(storageConflict.local.updatedAt);
+  saveStoredData(storageConflict.local);
+
+  fetch("/api/save-state", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(storageConflict.local),
+  }).catch(() => {});
+
+  setStorageConflict(null);
+  hasInitializedSyncRef.current = true;
+}
+
+function resolveStorageConflictWithCloud() {
+  if (!storageConflict) return;
+
+  setAreas(storageConflict.cloud.areas);
+  setBrainItems(storageConflict.cloud.brainItems);
+  setUpdatedAt(storageConflict.cloud.updatedAt);
+  saveStoredData(storageConflict.cloud);
+
+  setStorageConflict(null);
+  hasInitializedSyncRef.current = true;
+}
   function closeBrainConvert() {
     setBrainConvertItemId(null);
     setBrainConvertAreaId(null);
@@ -1577,7 +1638,49 @@ const step = steps[onboardingStep];
   </ModalShell>
 )}
 
+{storageConflict && (
+  <ModalShell>
+    <Card className="w-full max-w-md">
+      <div className="space-y-4 px-5 py-5">
+        <div>
+          <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
+            Choose which data to keep
+          </div>
+          <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            We found data on this device and in your account. Choosing one will
+            replace the other permanently.
+          </div>
+        </div>
 
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+          This device will overwrite your cloud data if you choose it.
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+          Cloud will overwrite this device’s data if you choose it.
+        </div>
+
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <button
+            type="button"
+            onClick={resolveStorageConflictWithLocal}
+            className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+          >
+            Use this device
+          </button>
+
+          <button
+            type="button"
+            onClick={resolveStorageConflictWithCloud}
+            className="rounded-2xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white"
+          >
+            Use cloud
+          </button>
+        </div>
+      </div>
+    </Card>
+  </ModalShell>
+)}
 
 
         <ConfirmDialog

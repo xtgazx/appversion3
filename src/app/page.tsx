@@ -104,7 +104,7 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   headers: {
     "Content-Type": "application/json",
   },
-  body: JSON.stringify({ areas, brainItems, updatedAt }),
+  body: JSON.stringify({ areas, brainItems, updatedAt: now }),
 }).catch(() => {});
   }, 500);
 }, [areas, brainItems]);

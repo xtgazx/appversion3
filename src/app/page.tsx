@@ -128,18 +128,7 @@ saveStoredData({ areas, brainItems, updatedAt: now });
 
     const cloud = json.success ? json.data : null;
     
-// no conflict → normal resolution
-const cloudHasData =
-  cloud &&
-  ((cloud.brainItems?.length ?? 0) > 0 ||
-    (cloud.areas?.some(
-      (area: Area) =>
-        area.projects.length > 0 ||
-        area.tasks.length > 0 ||
-        area.ideas.length > 0
-    ) ?? false));
-
-if (cloudHasData) {
+if (cloud) {
   setAreas(cloud.areas ?? []);
   setBrainItems(cloud.brainItems ?? []);
   setUpdatedAt(cloud.updatedAt ?? new Date().toISOString());

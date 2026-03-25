@@ -116,7 +116,9 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
 
   try {
     const res = await fetch("/api/load-state", { cache: "no-store" });
+    console.log("LOAD RESPONSE STATUS:", res.status);
     const json = await res.json();
+    console.log("LOAD JSON:", json);
 
     if (!isMounted) return;
 
@@ -125,6 +127,11 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
     const localTime = new Date(local.updatedAt || 0).getTime();
     const cloudTime = new Date(cloud?.updatedAt || 0).getTime();
 
+    console.log("LOCAL:", local);
+    console.log("CLOUD:", cloud);
+    console.log("LOCAL TIME:", localTime);
+    console.log("CLOUD TIME:", cloudTime);
+    
     if (cloud && cloudTime > localTime) {
   setAreas(cloud.areas ?? []);
   setBrainItems(cloud.brainItems ?? []);

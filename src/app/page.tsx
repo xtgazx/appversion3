@@ -458,6 +458,7 @@ if (cloud) {
       ...current,
     ]);
     setBrainInput("");
+    touchUpdatedAt();
   }
 
   function createArea() {
@@ -565,6 +566,7 @@ if (cloud) {
             }
       )
     );
+      touchUpdatedAt();
   }
 
   function convertIdea(areaId: string, ideaId: string) {
@@ -592,6 +594,7 @@ if (cloud) {
       })
     );
     setSelectedProjectId(nextProjectId);
+    touchUpdatedAt();
   }
 
   function deleteArea(areaId: string) {
@@ -736,6 +739,7 @@ if (cloud) {
     }
 
     setConfirmState(null);
+    touchUpdatedAt();
   }
 
   function addTaskToSelectedProject() {
@@ -767,6 +771,7 @@ if (cloud) {
     );
     setNewTaskTitle("");
     setIsAddingTask(false);
+    touchUpdatedAt();
   }
 
   function openBrainConvert(itemId: string) {
@@ -859,6 +864,7 @@ if (cloud) {
       current.filter((item) => item.id !== activeBrainItem.id)
     );
     closeBrainConvert();
+    touchUpdatedAt();
   }
 
   const headerTitle = selectedProject

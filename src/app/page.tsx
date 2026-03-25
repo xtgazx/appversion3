@@ -127,12 +127,19 @@ saveStoredData({ areas, brainItems, updatedAt: now });
     if (!isMounted) return;
 
     const cloud = json.success ? json.data : null;
-
-    const localTime = new Date(local.updatedAt || 0).getTime();
-    const cloudTime = new Date(cloud?.updatedAt || 0).getTime();
     
 // no conflict → normal resolution
-if (cloud && cloudTime > localTime) {
+const cloudHasData =
+  cloud &&
+  ((cloud.brainItems?.length ?? 0) > 0 ||
+    (cloud.areas?.some(
+      (area: Area) =>
+        area.projects.length > 0 ||
+        area.tasks.length > 0 ||
+        area.ideas.length > 0
+    ) ?? false));
+
+if (cloudHasData) {
   setAreas(cloud.areas ?? []);
   setBrainItems(cloud.brainItems ?? []);
   setUpdatedAt(cloud.updatedAt ?? new Date().toISOString());
@@ -723,38 +730,8 @@ if (cloud && cloudTime > localTime) {
     setBrainConvertAreaId(areas[0]?.id ?? null);
     setBrainConvertType("project");
   }
-  function resolveStorageConflictWithLocal() {
-  if (!storageConflict) return;
 
-  setAreas(storageConflict.local.areas);
-  setBrainItems(storageConflict.local.brainItems);
-  setUpdatedAt(storageConflict.local.updatedAt);
-  saveStoredData(storageConflict.local);
 
-  fetch("/api/save-state", {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(storageConflict.local),
-  }).catch(() => {});
-
-  setStorageConflict(null);
-  hasInitializedSyncRef.current = true;
-}
-
-function resolveStorageConflictWithCloud() {
-  if (!storageConflict) return;
-
-  setAreas(storageConflict.cloud.areas);
-  setBrainItems(storageConflict.cloud.brainItems);
-  setUpdatedAt(storageConflict.cloud.updatedAt);
-  saveStoredData(storageConflict.cloud);
-
-  setStorageConflict(null);
-  hasInitializedSyncRef.current = true;
-}
   function closeBrainConvert() {
     setBrainConvertItemId(null);
     setBrainConvertAreaId(null);
@@ -1604,51 +1581,6 @@ const step = steps[onboardingStep];
     </Card>
   </ModalShell>
 )}
-
-{storageConflict && (
-  <ModalShell>
-    <Card className="w-full max-w-md">
-      <div className="space-y-4 px-5 py-5">
-        <div>
-          <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
-            Choose which data to keep
-          </div>
-          <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-            We found data on this device and in your account. Choosing one will
-            replace the other permanently.
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
-          This device will overwrite your cloud data if you choose it.
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
-          Cloud will overwrite this device’s data if you choose it.
-        </div>
-
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <button
-            type="button"
-            onClick={resolveStorageConflictWithLocal}
-            className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
-          >
-            Use this device
-          </button>
-
-          <button
-            type="button"
-            onClick={resolveStorageConflictWithCloud}
-            className="rounded-2xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white"
-          >
-            Use cloud
-          </button>
-        </div>
-      </div>
-    </Card>
-  </ModalShell>
-)}
-
 
         <ConfirmDialog
           open={Boolean(confirmState)}

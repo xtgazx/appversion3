@@ -1016,7 +1016,6 @@ const step = steps[onboardingStep];
       <UserButton />
     </SignedIn>
   </div>
-</div>
             </div>
           </div>
 

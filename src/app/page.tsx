@@ -10,8 +10,17 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { areaColorOptions, defaultColor } from "../lib/data/initialData";
-import { readStoredData, saveStoredData } from "../lib/storage/localStorage";
+import {
+  areaColorOptions,
+  defaultColor,
+  initialAreas,
+  initialBrainItems,
+} from "../lib/data/initialData";
+import {
+  clearStoredData,
+  readStoredData,
+  saveStoredData,
+} from "../lib/storage/localStorage";
 import type {
   Area,
   BrainConvertType,
@@ -44,13 +53,20 @@ import { WeekView } from "../features/week/components/WeekView";
 import { TodayView } from "../features/today/components/TodayView";
 import { BrainDumpView } from "../features/brain/components/BrainDumpView";
 import { ReviewView } from "../features/review/components/ReviewView";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+  useAuth,
+} from "@clerk/nextjs";
 import {
   hasCompletedOnboarding,
   setCompletedOnboarding,
 } from "../lib/storage/localStorage";
 
 export default function Page() {
+const { isSignedIn } = useAuth();
 const [areas, setAreas] = useState<Area[]>([]);
 const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const [updatedAt, setUpdatedAt] = useState<string>("");  const [tab, setTab] = useState<TabKey>("areas");
@@ -82,6 +98,7 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
     useState<RenameAreaState>(null);
   const saveTimerRef = useRef<number | null>(null);
   const hasInitializedSyncRef = useRef(false);
+  const wasSignedInRef = useRef<boolean | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(0);
 
@@ -178,6 +195,26 @@ if (cloud) {
     setShowOnboarding(true);
   }
 }, []);
+
+  useEffect(() => {
+  if (wasSignedInRef.current === null) {
+    wasSignedInRef.current = Boolean(isSignedIn);
+    return;
+  }
+
+  if (wasSignedInRef.current && !isSignedIn) {
+    clearStoredData();
+    setAreas(initialAreas);
+    setBrainItems(initialBrainItems);
+    setUpdatedAt(new Date().toISOString());
+    setSelectedAreaId(null);
+    setSelectedProjectId(null);
+    setTab("areas");
+    hasInitializedSyncRef.current = false;
+  }
+
+  wasSignedInRef.current = Boolean(isSignedIn);
+}, [isSignedIn]);
 
   const selectedArea = areas.find((area) => area.id === selectedAreaId) ?? null;
   const selectedProject =

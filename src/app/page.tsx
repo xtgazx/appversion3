@@ -83,10 +83,6 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const saveTimerRef = useRef<number | null>(null);
   const hasInitializedSyncRef = useRef(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [storageConflict, setStorageConflict] = useState<{
-  local: { areas: Area[]; brainItems: BrainItem[]; updatedAt: string };
-  cloud: { areas: Area[]; brainItems: BrainItem[]; updatedAt: string };
-} | null>(null);
   const [onboardingStep, setOnboardingStep] = useState(0);
 
   useEffect(() => {
@@ -117,8 +113,7 @@ saveStoredData({ areas, brainItems, updatedAt: now });
 
   async function loadCloud() {
   const local = readStoredData();
-    let foundConflict = false;
-
+    
   try {
     const res = await fetch("/api/load-state", {
       method: "GET",
@@ -135,25 +130,7 @@ saveStoredData({ areas, brainItems, updatedAt: now });
 
     const localTime = new Date(local.updatedAt || 0).getTime();
     const cloudTime = new Date(cloud?.updatedAt || 0).getTime();
-
-    console.log("LOCAL:", local);
-    console.log("CLOUD:", cloud);
-    console.log("LOCAL TIME:", localTime);
-    console.log("CLOUD TIME:", cloudTime);
     
-const localHasData = hasMeaningfulData(local);
-const cloudHasData = cloud ? hasMeaningfulData(cloud) : false;
-
-// conflict case
-if (cloud && localHasData && cloudHasData) {
-  foundConflict = true;
-  setStorageConflict({
-    local,
-    cloud,
-  });
-  return;
-}
-
 // no conflict → normal resolution
 if (cloud && cloudTime > localTime) {
   setAreas(cloud.areas ?? []);
@@ -174,7 +151,7 @@ if (cloud && cloudTime > localTime) {
     setBrainItems(local.brainItems ?? []);
     setUpdatedAt(local.updatedAt ?? new Date().toISOString());
   } finally {
-  if (isMounted && !foundConflict) {
+  if (isMounted) {
     hasInitializedSyncRef.current = true;
   }
 }
@@ -217,19 +194,7 @@ if (cloud && cloudTime > localTime) {
   const weekTasks = useMemo(() => selectWeekTasks(allTasks), [allTasks]);
   const todayTasks = useMemo(() => selectTodayTasks(allTasks), [allTasks]);
   const completedTasks = useMemo(() => selectCompletedTasks(allTasks), [allTasks]);
-  function hasMeaningfulData(data: {
-  areas: Area[];
-  brainItems: BrainItem[];
-}) {
-  if (data.brainItems.length > 0) return true;
 
-  return data.areas.some(
-    (area) =>
-      area.projects.length > 0 ||
-      area.tasks.length > 0 ||
-      area.ideas.length > 0
-  );
-}
 
   function openArea(areaId: string) {
     setSelectedAreaId(areaId);

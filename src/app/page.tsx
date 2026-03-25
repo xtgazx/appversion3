@@ -117,6 +117,7 @@ saveStoredData({ areas, brainItems, updatedAt: now });
 
   async function loadCloud() {
   const local = readStoredData();
+    let foundConflict = false;
 
   try {
     const res = await fetch("/api/load-state", {
@@ -145,6 +146,7 @@ const cloudHasData = cloud ? hasMeaningfulData(cloud) : false;
 
 // conflict case
 if (cloud && localHasData && cloudHasData) {
+  foundConflict = true;
   setStorageConflict({
     local,
     cloud,
@@ -172,10 +174,10 @@ if (cloud && cloudTime > localTime) {
     setBrainItems(local.brainItems ?? []);
     setUpdatedAt(local.updatedAt ?? new Date().toISOString());
   } finally {
-    if (isMounted) {
-      hasInitializedSyncRef.current = true;
-    }
+  if (isMounted && !foundConflict) {
+    hasInitializedSyncRef.current = true;
   }
+}
 }
 
   loadCloud();

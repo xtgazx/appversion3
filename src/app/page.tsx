@@ -88,10 +88,11 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const [onboardingStep, setOnboardingStep] = useState(0);
 
   useEffect(() => {
-    const now = new Date().toISOString();
-  saveStoredData({ areas, brainItems, updatedAt: now });
-    
-  if (!hasInitializedSyncRef.current) return;
+    if (!hasInitializedSyncRef.current) return;
+
+const now = new Date().toISOString();
+
+saveStoredData({ areas, brainItems, updatedAt: now });
 
   if (saveTimerRef.current) {
     window.clearTimeout(saveTimerRef.current);

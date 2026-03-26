@@ -1266,7 +1266,7 @@ const step = steps[onboardingStep];
           </div>
         </div>
 
-        <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md border-t border-slate-200 bg-white px-4 pb-5 pt-3 backdrop-blur-xl dark:border-slate-700 dark:bg-slate-900 md:hidden">
+       <div className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-md border-t border-slate-200 bg-white px-4 pb-5 pt-3 backdrop-blur-xl dark:border-slate-700 dark:bg-slate-900 md:hidden">
           <div className="grid grid-cols-5 items-center gap-2 rounded-3xl border border-slate-200 bg-white p-2 shadow-2xl shadow-slate-200/70 dark:border-slate-700 dark:bg-slate-900 dark:shadow-black/40">
             <BottomTab
               active={!selectedArea && !selectedProject && tab === "areas"}

@@ -1,5 +1,6 @@
 import React from "react";
 import { Card } from "../../../components/ui/Card";
+import { InlineText } from "../../../components/ui/InlineText";
 
 export function BrainDumpView({
   brainInput,
@@ -8,6 +9,7 @@ export function BrainDumpView({
   brainItems,
   openBrainConvert,
   setConfirmState,
+  onEditBrainItem,
 }: {
   brainInput: string;
   setBrainInput: (value: string) => void;
@@ -15,6 +17,7 @@ export function BrainDumpView({
   brainItems: any[];
   openBrainConvert: (itemId: string) => void;
   setConfirmState: any;
+  onEditBrainItem: (id: string, text: string) => void;
 }) {
   return (
     <Card>
@@ -49,8 +52,12 @@ export function BrainDumpView({
               key={item.id}
               className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-3 dark:border-slate-700 dark:bg-slate-800"
             >
-              <div className="text-sm text-slate-800 dark:text-slate-100">
-                {item.text}
+              <div className="flex-1">
+                <InlineText
+                  value={item.text}
+                  onChange={(val) => onEditBrainItem(item.id, val)}
+                  placeholder="Empty"
+                />
               </div>
 
               <div className="flex gap-2">

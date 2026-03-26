@@ -103,16 +103,20 @@ export function AreaTile({
       </div>
 
       {isMenuOpen && (
-        <AreaMenu
-          area={area}
-          isEditingIcon={isEditingIcon}
-          onRenameArea={onRenameArea}
-          onCycleAreaColor={onCycleAreaColor}
-          onToggleEditingIcon={onToggleEditingIcon}
-          onOpenArea={onOpenArea}
-          onDeleteArea={onDeleteArea}
-          onSetAreaIcon={onSetAreaIcon}
-        />
+
+<AreaMenu
+  area={area}
+  isEditingIcon={isEditingIcon}
+  onRenameArea={onRenameArea}
+  onCycleAreaColor={onCycleAreaColor}
+  onToggleEditingIcon={onToggleEditingIcon}
+  onOpenArea={onOpenArea}
+  onDeleteArea={onDeleteArea}
+  onSetAreaIcon={onSetAreaIcon}
+  onCloseMenu={onToggleMenu}
+/>
+
+   
       )}
     </div>
   );

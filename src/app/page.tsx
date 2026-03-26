@@ -66,7 +66,7 @@ import {
 } from "../lib/storage/localStorage";
 
 export default function Page() {
-const { isSignedIn } = useAuth();
+const { isLoaded, isSignedIn } = useAuth();
 const [areas, setAreas] = useState<Area[]>([]);
 const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const [updatedAt, setUpdatedAt] = useState<string>("");  const [tab, setTab] = useState<TabKey>("areas");
@@ -101,6 +101,9 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const wasSignedInRef = useRef<boolean | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(0);
+const [syncStatus, setSyncStatus] = useState<
+  "booting" | "loading_cloud" | "ready" | "error"
+>("booting");
 
   useEffect(() => {
     if (!hasInitializedSyncRef.current) return;

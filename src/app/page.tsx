@@ -202,11 +202,6 @@ const [syncStatus, setSyncStatus] = useState<
   loadCloud();
 }, [isLoaded, isSignedIn]);
 
-  return () => {
-    isMounted = false;
-  };
-}, []);
-
   useEffect(() => {
     return () => {
       if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);

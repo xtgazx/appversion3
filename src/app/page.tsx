@@ -126,52 +126,70 @@ saveStoredData({ areas, brainItems, updatedAt });
   }, 500);
 }, [areas, brainItems]);
 
-  useEffect(() => {
-  let isMounted = true;
+ useEffect(() => {
+  if (!isLoaded) return;
 
   async function loadCloud() {
-  const local = readStoredData();
-    
-  try {
-    const res = await fetch("/api/load-state", {
-      method: "GET",
-      cache: "no-store",
-      credentials: "include",
-    });
-    console.log("LOAD RESPONSE STATUS:", res.status);
-    const json = await res.json();
-    console.log("LOAD JSON:", json);
+    // Signed out → local only
+    if (!isSignedIn) {
+      const local = readStoredData();
 
-    if (!isMounted) return;
+      setAreas(local.areas ?? initialAreas);
+      setBrainItems(local.brainItems ?? initialBrainItems);
+      setUpdatedAt(local.updatedAt ?? new Date().toISOString());
 
-    const cloud = json.success ? json.data : null;
-    
-if (cloud) {
-  setAreas(cloud.areas ?? []);
-  setBrainItems(cloud.brainItems ?? []);
-  setUpdatedAt(cloud.updatedAt ?? new Date().toISOString());
-} else {
-  setAreas(local.areas ?? []);
-  setBrainItems(local.brainItems ?? []);
-  setUpdatedAt(local.updatedAt ?? new Date().toISOString());
-}
-  } catch (e) {
-    console.error("cloud load failed", e);
+      hasInitializedSyncRef.current = true;
+      setSyncStatus("ready");
+      return;
+    }
 
-    if (!isMounted) return;
+    // Signed in → cloud first
+    setSyncStatus("loading_cloud");
+    hasInitializedSyncRef.current = false;
 
-    const local = readStoredData();
-    setAreas(local.areas ?? []);
-    setBrainItems(local.brainItems ?? []);
-    setUpdatedAt(local.updatedAt ?? new Date().toISOString());
-  } finally {
-  if (isMounted) {
-    hasInitializedSyncRef.current = true;
+    try {
+      const res = await fetch("/api/load-state", {
+        method: "GET",
+        cache: "no-store",
+        credentials: "include",
+      });
+
+      console.log("LOAD RESPONSE STATUS:", res.status);
+
+      const json = await res.json();
+      console.log("LOAD JSON:", json);
+
+      // If request failed, do not silently fall back and risk overwriting cloud
+      if (!res.ok) {
+        throw new Error(json?.error || "Cloud load failed");
+      }
+
+      if (json?.data) {
+        const data = json.data;
+
+        setAreas(data.areas ?? []);
+        setBrainItems(data.brainItems ?? []);
+        setUpdatedAt(data.updatedAt ?? new Date().toISOString());
+      } else {
+        // First signed-in load with no cloud row yet → adopt local once
+        const local = readStoredData();
+
+        setAreas(local.areas ?? initialAreas);
+        setBrainItems(local.brainItems ?? initialBrainItems);
+        setUpdatedAt(local.updatedAt ?? new Date().toISOString());
+      }
+
+      hasInitializedSyncRef.current = true;
+      setSyncStatus("ready");
+    } catch (err) {
+      console.error("Load failed", err);
+      hasInitializedSyncRef.current = false;
+      setSyncStatus("error");
+    }
   }
-}
-}
 
   loadCloud();
+}, [isLoaded, isSignedIn]);
 
   return () => {
     isMounted = false;

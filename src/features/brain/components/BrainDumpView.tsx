@@ -54,10 +54,9 @@ export function BrainDumpView({
             >
               <div className="flex-1">
                 <InlineText
-                  value={item.text}
-                  onChange={(val) => onEditBrainItem(item.id, val)}
-                  placeholder="Empty"
-                />
+  value={item.text}
+  onSave={(val) => onEditBrainItem(item.id, val)}
+/>
               </div>
 
               <div className="flex gap-2">

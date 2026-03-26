@@ -1249,14 +1249,22 @@ const step = steps[onboardingStep];
 )}
 
            {!selectedArea && !selectedProject && tab === "brain" && (
-  <BrainDumpView
-    brainInput={brainInput}
-    setBrainInput={setBrainInput}
-    addBrainItem={addBrainItem}
-    brainItems={brainItems}
-    openBrainConvert={openBrainConvert}
-    setConfirmState={setConfirmState}
-  />
+ <BrainDumpView
+  brainInput={brainInput}
+  setBrainInput={setBrainInput}
+  addBrainItem={addBrainItem}
+  brainItems={brainItems}
+  openBrainConvert={openBrainConvert}
+  setConfirmState={setConfirmState}
+  onEditBrainItem={(id, text) => {
+    setBrainItems((current) =>
+      current.map((item) =>
+        item.id === id ? { ...item, text } : item
+      )
+    );
+    touchUpdatedAt();
+  }}
+/>
 )}
 
                     {!selectedArea && !selectedProject && tab === "review" && (

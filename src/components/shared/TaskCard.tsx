@@ -124,12 +124,6 @@ export function TaskCard({
               </MetaPill>
             ) : null}
           </div>
-
-          {showHint ? (
-            <div className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-              Tap task title to edit.
-            </div>
-          ) : null}
         </div>
       </div>
 

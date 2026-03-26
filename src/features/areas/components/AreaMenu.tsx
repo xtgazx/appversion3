@@ -11,6 +11,7 @@ export function AreaMenu({
   onOpenArea,
   onDeleteArea,
   onSetAreaIcon,
+  onCloseMenu,
 }: {
   area: Area;
   isEditingIcon: boolean;
@@ -20,40 +21,59 @@ export function AreaMenu({
   onOpenArea: () => void;
   onDeleteArea: () => void;
   onSetAreaIcon: (iconKey: IconKey) => void;
+  onCloseMenu: () => void;
 }) {
   return (
     <div className="absolute right-0 top-12 z-50 w-48 rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800">
       <button
         type="button"
-        onClick={onRenameArea}
+        onClick={() => {
+          onRenameArea();
+          onCloseMenu();
+        }}
         className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
       >
         Edit name
       </button>
+
       <button
         type="button"
-        onClick={onCycleAreaColor}
+        onClick={() => {
+          onCycleAreaColor();
+          onCloseMenu();
+        }}
         className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
       >
         Change color
       </button>
+
       <button
         type="button"
-        onClick={onToggleEditingIcon}
+        onClick={() => {
+          onToggleEditingIcon();
+        }}
         className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
       >
         Change icon
       </button>
+
       <button
         type="button"
-        onClick={onOpenArea}
+        onClick={() => {
+          onOpenArea();
+          onCloseMenu();
+        }}
         className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
       >
         Open area
       </button>
+
       <button
         type="button"
-        onClick={onDeleteArea}
+        onClick={() => {
+          onDeleteArea();
+          onCloseMenu();
+        }}
         className="block w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950/30"
       >
         Delete area
@@ -61,7 +81,13 @@ export function AreaMenu({
 
       {isEditingIcon && (
         <div className="border-t border-slate-200 p-3 dark:border-slate-700">
-          <IconPicker selected={area.iconKey} onSelect={onSetAreaIcon} />
+          <IconPicker
+            selected={area.iconKey}
+            onSelect={(icon) => {
+              onSetAreaIcon(icon);
+              onCloseMenu();
+            }}
+          />
         </div>
       )}
     </div>

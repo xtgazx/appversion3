@@ -105,26 +105,37 @@ const [syncStatus, setSyncStatus] = useState<
   "booting" | "loading_cloud" | "ready" | "error"
 >("booting");
 
-  useEffect(() => {
-    if (!hasInitializedSyncRef.current) return;
+ useEffect(() => {
+  if (!isLoaded) return;
+  if (syncStatus !== "ready") return;
+  if (!updatedAt) return;
 
-saveStoredData({ areas, brainItems, updatedAt });
+  saveStoredData({ areas, brainItems, updatedAt });
 
   if (saveTimerRef.current) {
     window.clearTimeout(saveTimerRef.current);
   }
 
+  // Signed out → local only
+  if (!isSignedIn) {
+    return;
+  }
+
+  // Signed in → local cache + cloud save
   saveTimerRef.current = window.setTimeout(() => {
     fetch("/api/save-state", {
-  method: "POST",
-  credentials: "include",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({ areas, brainItems, updatedAt }),
-}).catch(() => {});
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ areas, brainItems, updatedAt }),
+    }).catch((err) => {
+      console.error("Save failed", err);
+      setSyncStatus("error");
+    });
   }, 500);
-}, [areas, brainItems]);
+}, [areas, brainItems, updatedAt, isLoaded, isSignedIn, syncStatus]);
 
  useEffect(() => {
   if (!isLoaded) return;

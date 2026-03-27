@@ -1193,6 +1193,7 @@ const step = steps[onboardingStep];
   onCycleTaskDuration={cycleTaskDuration}
   onDeleteIdea={deleteIdea}
   onConvertIdea={convertIdea}
+  onConvertTaskToProject={convertTaskToProject}
 />
             )}
 

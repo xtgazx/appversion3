@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   CheckCircle2,
   ChevronDown,
   ChevronRight,
   ClipboardList,
   Lightbulb,
+  MoreVertical,
   Trash2,
 } from "lucide-react";
 import type { Area, IconKey } from "../../../lib/types/shared";
@@ -42,6 +43,7 @@ export function AreaDetailView({
   onCycleTaskDuration,
   onDeleteIdea,
   onConvertIdea,
+  onConvertTaskToProject,
 }: {
   selectedArea: Area;
   editingAreaIconId: string | null;
@@ -117,79 +119,126 @@ export function AreaDetailView({
   ) => void;
   onDeleteIdea: (areaId: string, ideaId: string) => void;
   onConvertIdea: (areaId: string, ideaId: string) => void;
+  onConvertTaskToProject: (areaId: string, taskId: string) => void;
 }) {
+  const [headerMenuOpen, setHeaderMenuOpen] = React.useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!headerMenuOpen) return;
+
+    function handlePointerDown(event: MouseEvent | TouchEvent) {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(event.target as Node)) {
+        setHeaderMenuOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setHeaderMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [headerMenuOpen]);
+
   const AreaIcon =
     iconMap[selectedArea.iconKey as keyof typeof iconMap] ?? iconMap.clipboard;
 
   return (
     <div className="space-y-4 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
-      <Card
-        className={`bg-gradient-to-b dark:from-slate-800 dark:to-slate-700/90 dark:shadow-black/30 md:col-span-2 ${selectedArea.color}`}
-      >
-        <div className="px-5 py-5">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-white/85 p-3 shadow-sm dark:bg-slate-900/80">
+      <div className="md:col-span-2">
+        <div className="relative" ref={menuRef}>
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="rounded-2xl bg-slate-100 p-2.5 dark:bg-slate-900">
                 <AreaIcon className="h-5 w-5 text-slate-700 dark:text-slate-100" />
               </div>
-              <div>
-                <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
+              <div className="min-w-0">
+                <div className="truncate text-base font-semibold text-slate-900 dark:text-slate-100">
                   {selectedArea.name}
-                </div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">
-                  Projects, tasks, and ideas
                 </div>
               </div>
             </div>
-            <div className="flex flex-wrap justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => onRenameArea(selectedArea.id)}
-                className="rounded-full border border-slate-200 bg-white/85 px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-200"
-              >
-                Edit Name
-              </button>
-              <button
-                type="button"
-                onClick={() => onCycleAreaColor(selectedArea.id)}
-                className="rounded-full border border-slate-200 bg-white/85 px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-200"
-              >
-                Color
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  setEditingAreaIconId((current) =>
-                    current === selectedArea.id ? null : selectedArea.id
-                  )
-                }
-                className="rounded-full border border-slate-200 bg-white/85 px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-200"
-              >
-                Icon
-              </button>
-              <button
-                type="button"
-                onClick={() => onDeleteArea(selectedArea.id)}
-                className="rounded-full border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-200"
-              >
-                Delete
-              </button>
-            </div>
+
+            <button
+              type="button"
+              onClick={() => setHeaderMenuOpen((current) => !current)}
+              className="rounded-full border border-slate-200 bg-white p-2 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+            >
+              <MoreVertical className="h-4 w-4" />
+            </button>
           </div>
 
-          {editingAreaIconId === selectedArea.id && (
-            <div className="mt-4">
-              <IconPicker
-                selected={selectedArea.iconKey}
-                onSelect={(icon) => {
-                  onSetAreaIcon(selectedArea.id, icon);
-                  setEditingAreaIconId(null);
+          {headerMenuOpen && (
+            <div className="absolute right-0 top-14 z-50 w-48 rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800">
+              <button
+                type="button"
+                onClick={() => {
+                  onRenameArea(selectedArea.id);
+                  setHeaderMenuOpen(false);
                 }}
-              />
+                className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+              >
+                Edit name
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  onCycleAreaColor(selectedArea.id);
+                  setHeaderMenuOpen(false);
+                }}
+                className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+              >
+                Change color
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingAreaIconId((current) =>
+                    current === selectedArea.id ? null : selectedArea.id
+                  );
+                }}
+                className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+              >
+                Change icon
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  onDeleteArea(selectedArea.id);
+                  setHeaderMenuOpen(false);
+                }}
+                className="block w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950/30"
+              >
+                Delete area
+              </button>
+
+              {editingAreaIconId === selectedArea.id && (
+                <div className="border-t border-slate-200 p-3 dark:border-slate-700">
+                  <IconPicker
+                    selected={selectedArea.iconKey}
+                    onSelect={(icon) => {
+                      onSetAreaIcon(selectedArea.id, icon);
+                      setEditingAreaIconId(null);
+                      setHeaderMenuOpen(false);
+                    }}
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>
-      </Card>
+      </div>
 
       <Card className="border-l-4 border-l-slate-400 bg-white dark:bg-slate-800 md:col-span-1">
         <div className="px-5 pb-3 pt-5">
@@ -295,7 +344,7 @@ export function AreaDetailView({
                 }}
                 areaName={selectedArea.name}
                 projectName={null}
-                showHint={true}
+                showHint={false}
                 viewMode="area"
                 onToggle={() => onToggleTask(selectedArea.id, null, task.id, "area")}
                 onSaveTitle={(value) =>
@@ -319,6 +368,9 @@ export function AreaDetailView({
                 }
                 onCycleDuration={() =>
                   onCycleTaskDuration(selectedArea.id, null, task.id, "area")
+                }
+                onConvertToProject={() =>
+                  onConvertTaskToProject(selectedArea.id, task.id)
                 }
               />
             ))

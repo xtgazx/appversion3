@@ -7,6 +7,7 @@ import {
   CalendarDays,
   CheckCircle2,
   Home,
+  MoreVertical,
   Sparkles,
   X,
 } from "lucide-react";
@@ -64,6 +65,8 @@ import {
   hasCompletedOnboarding,
   setCompletedOnboarding,
 } from "../lib/storage/localStorage";
+import { iconMap } from "../lib/icons/iconMap";
+import { IconPicker } from "../components/ui/IconPicker";
 
 export default function Page() {
 const { isLoaded, isSignedIn } = useAuth();
@@ -73,6 +76,7 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [areaMenuOpen, setAreaMenuOpen] = useState<string | null>(null);
+  const [headerAreaMenuOpen, setHeaderAreaMenuOpen] = useState(false);
   const [editingAreaIconId, setEditingAreaIconId] = useState<string | null>(null);
   const [ideasExpanded, setIdeasExpanded] = useState(true);
   const [showNewArea, setShowNewArea] = useState(false);
@@ -98,6 +102,7 @@ const [brainItems, setBrainItems] = useState<BrainItem[]>([]);
     useState<RenameAreaState>(null);
   const saveTimerRef = useRef<number | null>(null);
   const hasInitializedSyncRef = useRef(false);
+  const headerAreaMenuRef = useRef<HTMLDivElement | null>(null);
   const wasSignedInRef = useRef<boolean | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(0);
@@ -216,6 +221,35 @@ const [syncStatus, setSyncStatus] = useState<
   }, [selectedAreaId, selectedProjectId, tab]);
 
   useEffect(() => {
+  if (!headerAreaMenuOpen) return;
+
+  function handlePointerDown(event: MouseEvent | TouchEvent) {
+    if (!headerAreaMenuRef.current) return;
+    if (!headerAreaMenuRef.current.contains(event.target as Node)) {
+      setHeaderAreaMenuOpen(false);
+      setEditingAreaIconId(null);
+    }
+  }
+
+  function handleKeyDown(event: KeyboardEvent) {
+    if (event.key === "Escape") {
+      setHeaderAreaMenuOpen(false);
+      setEditingAreaIconId(null);
+    }
+  }
+
+  document.addEventListener("mousedown", handlePointerDown);
+  document.addEventListener("touchstart", handlePointerDown);
+  document.addEventListener("keydown", handleKeyDown);
+
+  return () => {
+    document.removeEventListener("mousedown", handlePointerDown);
+    document.removeEventListener("touchstart", handlePointerDown);
+    document.removeEventListener("keydown", handleKeyDown);
+  };
+}, [headerAreaMenuOpen, setEditingAreaIconId]);
+
+  useEffect(() => {
   if (!hasCompletedOnboarding()) {
     setShowOnboarding(true);
   }
@@ -242,6 +276,10 @@ const [syncStatus, setSyncStatus] = useState<
 }, [isSignedIn]);
 
   const selectedArea = areas.find((area) => area.id === selectedAreaId) ?? null;
+  const SelectedAreaIcon =
+  selectedArea
+    ? iconMap[selectedArea.iconKey as keyof typeof iconMap] ?? iconMap.clipboard
+    : null;
   const selectedProject =
     selectedArea?.projects.find((project) => project.id === selectedProjectId) ??
     null;
@@ -1092,19 +1130,30 @@ const step = steps[onboardingStep];
               </span>
             </div>
             <div className="mb-2 flex w-full items-start gap-3">
+<div className="mb-2 flex w-full items-start gap-3">
   <div className="flex min-w-0 flex-1 items-center gap-2">
     {(selectedArea || selectedProject) && (
       <button
         type="button"
         onClick={() => {
           if (selectedProject) setSelectedProjectId(null);
-          else setSelectedAreaId(null);
+          else {
+            setSelectedAreaId(null);
+            setHeaderAreaMenuOpen(false);
+            setEditingAreaIconId(null);
+          }
         }}
         className="rounded-full border border-slate-200 bg-white p-2 text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
       >
         <ArrowLeft className="h-4 w-4" />
       </button>
     )}
+
+    {selectedArea && !selectedProject && SelectedAreaIcon ? (
+      <div className="rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <SelectedAreaIcon className="h-5 w-5 text-slate-700 dark:text-slate-100" />
+      </div>
+    ) : null}
 
     <div className="min-w-0">
       <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
@@ -1116,7 +1165,78 @@ const step = steps[onboardingStep];
     </div>
   </div>
 
-  <div className="ml-auto flex shrink-0 items-center gap-2 self-start">
+  <div className="ml-auto flex shrink-0 items-start gap-2 self-start">
+    {selectedArea && !selectedProject && (
+      <div className="relative" ref={headerAreaMenuRef}>
+        <button
+          type="button"
+          onClick={() => setHeaderAreaMenuOpen((current) => !current)}
+          className="rounded-full border border-slate-200 bg-white p-2 text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+        >
+          <MoreVertical className="h-4 w-4" />
+        </button>
+
+        {headerAreaMenuOpen && (
+          <div className="absolute right-0 top-12 z-50 w-48 rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800">
+            <button
+              type="button"
+              onClick={() => {
+                onRenameArea(selectedArea.id);
+                setHeaderAreaMenuOpen(false);
+              }}
+              className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+            >
+              Edit name
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                onCycleAreaColor(selectedArea.id);
+                setHeaderAreaMenuOpen(false);
+              }}
+              className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+            >
+              Change color
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEditingAreaIconId((current) =>
+                  current === selectedArea.id ? null : selectedArea.id
+                );
+              }}
+              className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+            >
+              Change icon
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                deleteArea(selectedArea.id);
+                setHeaderAreaMenuOpen(false);
+              }}
+              className="block w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950/30"
+            >
+              Delete area
+            </button>
+
+            {editingAreaIconId === selectedArea.id && (
+              <div className="border-t border-slate-200 p-3 dark:border-slate-700">
+                <IconPicker
+                  selected={selectedArea.iconKey}
+                  onSelect={(iconKey) => {
+                    setAreaIcon(selectedArea.id, iconKey);
+                    setEditingAreaIconId(null);
+                    setHeaderAreaMenuOpen(false);
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    )}
+
     <SignedOut>
       <SignInButton mode="modal">
         <button
@@ -1132,7 +1252,7 @@ const step = steps[onboardingStep];
       <UserButton />
     </SignedIn>
   </div>
-            </div>
+</div>
           </div>
 
           <div className="flex-1 overflow-y-auto px-4 pb-28 pt-4 md:px-6 md:pb-10">
@@ -1191,17 +1311,11 @@ const step = steps[onboardingStep];
             )}
 
             {selectedArea && !selectedProject && (
-              <AreaDetailView
+             <AreaDetailView
   selectedArea={selectedArea}
-  editingAreaIconId={editingAreaIconId}
   ideasExpanded={ideasExpanded}
   setIdeasExpanded={setIdeasExpanded}
-  setEditingAreaIconId={setEditingAreaIconId}
   setAreas={setAreas}
-  onRenameArea={renameArea}
-  onCycleAreaColor={cycleAreaColor}
-  onDeleteArea={deleteArea}
-  onSetAreaIcon={setAreaIcon}
   onOpenAddProject={() => {
     setNewProjectName("");
     setShowAddProjectModal(true);
@@ -1228,6 +1342,12 @@ const step = steps[onboardingStep];
   onDeleteIdea={deleteIdea}
   onConvertIdea={convertIdea}
   onConvertTaskToProject={convertTaskToProject}
+  editingAreaIconId={editingAreaIconId}
+  setEditingAreaIconId={setEditingAreaIconId}
+  onRenameArea={renameArea}
+  onCycleAreaColor={cycleAreaColor}
+  onDeleteArea={deleteArea}
+  onSetAreaIcon={setAreaIcon}
 />
             )}
 

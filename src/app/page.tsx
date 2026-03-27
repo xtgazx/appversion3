@@ -1129,7 +1129,7 @@ const step = steps[onboardingStep];
                 {headerEyebrow}
               </span>
             </div>
-            <div className="mb-2 flex w-full items-start gap-3">
+       
 <div className="mb-2 flex w-full items-start gap-3">
   <div className="flex min-w-0 flex-1 items-center gap-2">
     {(selectedArea || selectedProject) && (
@@ -1181,7 +1181,7 @@ const step = steps[onboardingStep];
             <button
               type="button"
               onClick={() => {
-                onRenameArea(selectedArea.id);
+                renameArea(selectedArea.id);
                 setHeaderAreaMenuOpen(false);
               }}
               className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
@@ -1191,7 +1191,7 @@ const step = steps[onboardingStep];
             <button
               type="button"
               onClick={() => {
-                onCycleAreaColor(selectedArea.id);
+                cycleAreaColor(selectedArea.id);
                 setHeaderAreaMenuOpen(false);
               }}
               className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
@@ -1253,6 +1253,7 @@ const step = steps[onboardingStep];
     </SignedIn>
   </div>
 </div>
+     
           </div>
 
           <div className="flex-1 overflow-y-auto px-4 pb-28 pt-4 md:px-6 md:pb-10">

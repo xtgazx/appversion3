@@ -1,32 +1,23 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import {
   CheckCircle2,
   ChevronDown,
   ChevronRight,
   ClipboardList,
   Lightbulb,
-  MoreVertical,
   Trash2,
 } from "lucide-react";
 import type { Area, IconKey } from "../../../lib/types/shared";
-import { iconMap } from "../../../lib/icons/iconMap";
 import { Card } from "../../../components/ui/Card";
 import { MetaPill } from "../../../components/ui/MetaPill";
-import { IconPicker } from "../../../components/ui/IconPicker";
 import { InlineText } from "../../../components/ui/InlineText";
 import { TaskCard } from "../../../components/shared/TaskCard";
 
 export function AreaDetailView({
   selectedArea,
-  editingAreaIconId,
   ideasExpanded,
   setIdeasExpanded,
-  setEditingAreaIconId,
   setAreas,
-  onRenameArea,
-  onCycleAreaColor,
-  onDeleteArea,
-  onSetAreaIcon,
   onOpenAddProject,
   onOpenAddTask,
   onOpenAddIdea,
@@ -121,125 +112,8 @@ export function AreaDetailView({
   onConvertIdea: (areaId: string, ideaId: string) => void;
   onConvertTaskToProject: (areaId: string, taskId: string) => void;
 }) {
-  const [headerMenuOpen, setHeaderMenuOpen] = React.useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!headerMenuOpen) return;
-
-    function handlePointerDown(event: MouseEvent | TouchEvent) {
-      if (!menuRef.current) return;
-      if (!menuRef.current.contains(event.target as Node)) {
-        setHeaderMenuOpen(false);
-      }
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setHeaderMenuOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("touchstart", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("touchstart", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [headerMenuOpen]);
-
-  const AreaIcon =
-    iconMap[selectedArea.iconKey as keyof typeof iconMap] ?? iconMap.clipboard;
-
   return (
     <div className="space-y-4 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
-      <div className="md:col-span-2">
-        <div className="relative" ref={menuRef}>
-          <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="rounded-2xl bg-slate-100 p-2.5 dark:bg-slate-900">
-                <AreaIcon className="h-5 w-5 text-slate-700 dark:text-slate-100" />
-              </div>
-              <div className="min-w-0">
-                <div className="truncate text-base font-semibold text-slate-900 dark:text-slate-100">
-                  {selectedArea.name}
-                </div>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setHeaderMenuOpen((current) => !current)}
-              className="rounded-full border border-slate-200 bg-white p-2 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
-            >
-              <MoreVertical className="h-4 w-4" />
-            </button>
-          </div>
-
-          {headerMenuOpen && (
-            <div className="absolute right-0 top-14 z-50 w-48 rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800">
-              <button
-                type="button"
-                onClick={() => {
-                  onRenameArea(selectedArea.id);
-                  setHeaderMenuOpen(false);
-                }}
-                className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
-              >
-                Edit name
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  onCycleAreaColor(selectedArea.id);
-                  setHeaderMenuOpen(false);
-                }}
-                className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
-              >
-                Change color
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEditingAreaIconId((current) =>
-                    current === selectedArea.id ? null : selectedArea.id
-                  );
-                }}
-                className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
-              >
-                Change icon
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  onDeleteArea(selectedArea.id);
-                  setHeaderMenuOpen(false);
-                }}
-                className="block w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950/30"
-              >
-                Delete area
-              </button>
-
-              {editingAreaIconId === selectedArea.id && (
-                <div className="border-t border-slate-200 p-3 dark:border-slate-700">
-                  <IconPicker
-                    selected={selectedArea.iconKey}
-                    onSelect={(icon) => {
-                      onSetAreaIcon(selectedArea.id, icon);
-                      setEditingAreaIconId(null);
-                      setHeaderMenuOpen(false);
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
       <Card className="border-l-4 border-l-slate-400 bg-white dark:bg-slate-800 md:col-span-1">
         <div className="px-5 pb-3 pt-5">
           <div className="flex items-center justify-between gap-3">

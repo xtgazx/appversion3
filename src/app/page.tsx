@@ -624,6 +624,40 @@ const [syncStatus, setSyncStatus] = useState<
     touchUpdatedAt();
   }
 
+  function convertTaskToProject(areaId: string, taskId: string) {
+  const newProjectId = uid("project");
+
+  setAreas((current) =>
+    current.map((area) => {
+      if (area.id !== areaId) return area;
+
+      const task = area.tasks.find((item) => item.id === taskId);
+      if (!task) return area;
+
+      return {
+        ...area,
+        tasks: area.tasks.filter((item) => item.id !== taskId),
+        projects: [
+          ...area.projects,
+          {
+            id: newProjectId,
+            name: task.title,
+            notes: "",
+            dueDate: "",
+            status: "Active",
+            tasks: [],
+          },
+        ],
+      };
+    })
+  );
+
+  setSelectedAreaId(areaId);
+  setSelectedProjectId(newProjectId);
+  setTab("areas");
+  touchUpdatedAt();
+}
+
   function deleteArea(areaId: string) {
     const area = areas.find((item) => item.id === areaId);
     if (!area) return;

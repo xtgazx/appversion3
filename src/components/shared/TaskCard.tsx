@@ -39,8 +39,9 @@ export function TaskCard({
 }) {
   const [expanded, setExpanded] = useState(false);
 
-  const dotColor =
-    task.duration === "quick"
+    const dotColor = task.done
+    ? "bg-slate-300 dark:bg-slate-500"
+    : task.duration === "quick"
       ? "bg-green-500"
       : task.duration === "medium"
         ? "bg-yellow-400"

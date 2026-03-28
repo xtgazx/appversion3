@@ -111,7 +111,16 @@ export function TaskCard({
             </button>
           </div>
 
-          <div className="mt-1 flex flex-wrap items-center gap-2">
+         
+        </div>
+      </div>
+
+      {expanded && (
+        <div className="mt-3 border-t border-slate-200 pt-3 dark:border-slate-700">
+          <div className="flex flex-wrap gap-2">
+            {(viewMode === "project" || viewMode === "area") && (
+              <>
+                 <div className="mt-1 flex flex-wrap items-center gap-2">
             <MetaPill>{areaName}</MetaPill>
             {projectName ? <MetaPill>{projectName}</MetaPill> : <MetaPill>Task</MetaPill>}
             {task.inWeek ? <MetaPill>Week</MetaPill> : null}
@@ -125,14 +134,6 @@ export function TaskCard({
               </MetaPill>
             ) : null}
           </div>
-        </div>
-      </div>
-
-      {expanded && (
-        <div className="mt-3 border-t border-slate-200 pt-3 dark:border-slate-700">
-          <div className="flex flex-wrap gap-2">
-            {(viewMode === "project" || viewMode === "area") && (
-              <>
                 {task.inWeek ? (
                   <button
                     type="button"

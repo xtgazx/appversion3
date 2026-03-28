@@ -112,6 +112,7 @@ export function AreaDetailView({
   onConvertIdea: (areaId: string, ideaId: string) => void;
   onConvertTaskToProject: (areaId: string, taskId: string) => void;
 }) {
+  const [expandedProjectId, setExpandedProjectId] = React.useState<string | null>(null);
   return (
     <div className="space-y-4 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
       <Card className="border-l-4 border-l-slate-400 bg-white dark:bg-slate-800 md:col-span-1">
@@ -136,46 +137,66 @@ export function AreaDetailView({
           {selectedArea.projects.length ? (
             selectedArea.projects.map((project) => (
               <div
-                key={project.id}
-                className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm dark:border-slate-700 dark:bg-slate-800"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <button
-                    type="button"
-                    onClick={() => onOpenProject(project.id)}
-                    className="flex-1 text-left"
-                  >
-                    <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                      {project.name}
-                    </div>
-                    <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                      {project.notes || "No notes yet"}
-                    </div>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      <MetaPill>{project.dueDate || "No due date"}</MetaPill>
-                      <MetaPill>Status: {project.status}</MetaPill>
-                      <MetaPill>{project.tasks.length} tasks</MetaPill>
-                    </div>
-                  </button>
+  key={project.id}
+  className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm dark:border-slate-700 dark:bg-slate-800"
+>
+  <div className="flex items-start justify-between gap-3">
+    <div className="min-w-0 flex-1">
+      <button
+        type="button"
+        onClick={() =>
+          setExpandedProjectId((current) =>
+            current === project.id ? null : project.id
+          )
+        }
+        className="flex w-full items-start gap-3 text-left"
+      >
+        <div className="min-w-0 flex-1">
+          <div className="text-base font-semibold text-slate-900 dark:text-slate-100">
+            {project.name}
+          </div>
+          <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            {project.notes || "No notes yet"}
+          </div>
+        </div>
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => onOpenProject(project.id)}
-                      className="rounded-full border border-slate-200 bg-white p-2 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onDeleteProject(selectedArea.id, project.id)}
-                      className="rounded-full border border-red-200 bg-red-50 p-2 text-red-600 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-200"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              </div>
+        {expandedProjectId === project.id ? (
+          <ChevronDown className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+        ) : (
+          <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+        )}
+      </button>
+
+      {expandedProjectId === project.id && (
+        <div className="mt-3 border-t border-slate-200 pt-3 dark:border-slate-700">
+          <div className="mb-3 flex flex-wrap gap-2">
+            <MetaPill>{project.dueDate || "No due date"}</MetaPill>
+            <MetaPill>Status: {project.status}</MetaPill>
+            <MetaPill>{project.tasks.length} tasks</MetaPill>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => onOpenProject(project.id)}
+              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+            >
+              Open Project
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onDeleteProject(selectedArea.id, project.id)}
+              className="rounded-full border border-red-200 bg-red-50 px-3 py-1.5 text-xs text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-200"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+</div>
             ))
           ) : (
             <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">

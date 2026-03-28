@@ -300,6 +300,41 @@ const [syncStatus, setSyncStatus] = useState<
     setSelectedProjectId(null);
   }
 
+  function addProjectTask(areaId: string, projectId: string, title: string) {
+    const nextTitle = title.trim();
+    if (!nextTitle) return;
+
+    const newTask: Task = {
+      id: uid("task"),
+      title: nextTitle,
+      done: false,
+      due: "",
+      inWeek: false,
+      inToday: false,
+      duration: null,
+    };
+
+    setAreas((current) =>
+      current.map((area) =>
+        area.id !== areaId
+          ? area
+          : {
+              ...area,
+              projects: area.projects.map((project) =>
+                project.id !== projectId
+                  ? project
+                  : {
+                      ...project,
+                      tasks: [...project.tasks, newTask],
+                    }
+              ),
+            }
+      )
+    );
+
+    touchUpdatedAt();
+  }
+
   function updateProjectTask(
     areaId: string,
     projectId: string,

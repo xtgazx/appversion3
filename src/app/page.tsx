@@ -1459,7 +1459,33 @@ const step = steps[onboardingStep];
 )}
 
                     {!selectedArea && !selectedProject && tab === "review" && (
-  <ReviewView />
+  <ReviewView
+    areas={areas}
+    brainItems={brainItems}
+    allTasks={allTasks}
+    weekTasks={weekTasks}
+    todayTasks={todayTasks}
+    openBrainConvert={openBrainConvert}
+    setConfirmState={setConfirmState}
+    onEditBrainItem={(id, text) => {
+      setBrainItems((current) =>
+        current.map((item) =>
+          item.id === id ? { ...item, text } : item
+        )
+      );
+      touchUpdatedAt();
+    }}
+    onAddProjectTask={addProjectTask}
+    toggleTask={toggleTask}
+    setTaskTitle={setTaskTitle}
+    setTaskDate={setTaskDate}
+    addToWeek={addToWeek}
+    addToToday={addToToday}
+    removeFromWeek={removeFromWeek}
+    removeFromToday={removeFromToday}
+    deleteTask={deleteTask}
+    cycleTaskDuration={cycleTaskDuration}
+  />
 )}
             
           </div>

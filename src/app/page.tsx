@@ -1381,7 +1381,10 @@ const step = steps[onboardingStep];
     setNewIdeaTitle("");
     setShowAddIdeaModal(true);
   }}
-  onOpenProject={(projectId) => setSelectedProjectId(projectId)}
+  onOpenProject={(projectId) => {
+      setSelectedProjectId(projectId);
+      window.history.pushState({ view: "project", projectId }, "");
+  }}
   onDeleteProject={deleteProject}
   onToggleTask={toggleTask}
   onSetTaskTitle={setTaskTitle}

@@ -214,6 +214,26 @@ const [syncStatus, setSyncStatus] = useState<
   }, []);
 
   useEffect(() => {
+  function handlePopState() {
+    if (selectedProjectId) {
+      setSelectedProjectId(null);
+      return;
+    }
+
+    if (selectedAreaId) {
+      setSelectedAreaId(null);
+      return;
+    }
+  }
+
+  window.addEventListener("popstate", handlePopState);
+
+  return () => {
+    window.removeEventListener("popstate", handlePopState);
+  };
+}, [selectedAreaId, selectedProjectId]);
+
+  useEffect(() => {
     setAreaMenuOpen(null);
     setEditingAreaIconId(null);
     setIsAddingTask(false);
@@ -297,6 +317,7 @@ const [syncStatus, setSyncStatus] = useState<
 
   function openArea(areaId: string) {
     setSelectedAreaId(areaId);
+    window.history.pushState({ view: "area", areaId }, "");
     setSelectedProjectId(null);
   }
 
@@ -610,6 +631,7 @@ const [syncStatus, setSyncStatus] = useState<
     setNewProjectName("");
     setShowAddProjectModal(false);
     setSelectedProjectId(projectId);
+    window.history.pushState({ view: "project", projectId }, "");
     touchUpdatedAt();
   }
 
@@ -726,7 +748,9 @@ const [syncStatus, setSyncStatus] = useState<
   );
 
   setSelectedAreaId(areaId);
+  window.history.pushState({ view: "area", areaId }, "");
   setSelectedProjectId(newProjectId);
+  window.history.pushState({ view: "project", projectId }, "");
   setTab("areas");
   touchUpdatedAt();
 }
@@ -1170,14 +1194,7 @@ const step = steps[onboardingStep];
     {(selectedArea || selectedProject) && (
       <button
         type="button"
-        onClick={() => {
-          if (selectedProject) setSelectedProjectId(null);
-          else {
-            setSelectedAreaId(null);
-            setHeaderAreaMenuOpen(false);
-            setEditingAreaIconId(null);
-          }
-        }}
+        onClick={() => window.history.back()}
         className="rounded-full border border-slate-200 bg-white p-2 text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
       >
         <ArrowLeft className="h-4 w-4" />

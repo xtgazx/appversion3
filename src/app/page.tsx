@@ -750,7 +750,7 @@ const [syncStatus, setSyncStatus] = useState<
   setSelectedAreaId(areaId);
   window.history.pushState({ view: "area", areaId }, "");
   setSelectedProjectId(newProjectId);
-  window.history.pushState({ view: "project", projectId }, "");
+  window.history.pushState({ view: "project", projectId: newProjectId }, "");
   setTab("areas");
   touchUpdatedAt();
 }

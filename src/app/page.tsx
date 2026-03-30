@@ -631,7 +631,7 @@ const [syncStatus, setSyncStatus] = useState<
     setNewProjectName("");
     setShowAddProjectModal(false);
     setSelectedProjectId(projectId);
-    window.history.pushState({ view: "project", projectId: newProjectId }, "");
+    window.history.pushState({ view: "project", projectId }, "");
     touchUpdatedAt();
   }
 
@@ -750,7 +750,7 @@ const [syncStatus, setSyncStatus] = useState<
   setSelectedAreaId(areaId);
   window.history.pushState({ view: "area", areaId }, "");
   setSelectedProjectId(newProjectId);
-  window.history.pushState({ view: "project", projectId: newProjectId }, "");
+  window.history.pushState({ view: "project", projectId }, "");
   setTab("areas");
   touchUpdatedAt();
 }
